@@ -1,0 +1,73 @@
+
+@media (hover: hover) and (pointer: fine) {
+    body,
+    body * {
+        /* cursor: none !important; */
+    }
+
+    .custom-cursor {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #0C0C52;
+        box-shadow:
+            0 0 8px #9a9af1,
+            0 0 18px #7575c4;
+        pointer-events: none;
+        z-index: 999999;
+        transform: translate(-50%, -50%);
+    }
+
+    .custom-cursor.active {
+        transform: translate(-50%, -50%) scale(1.5);
+        box-shadow:
+            0 0 12px rgba(62, 61, 134, 0.9),
+            0 0 25px rgba(54, 56, 151, 0.367);
+    }
+
+    .cursor-glitter-container {
+        position: fixed;
+        inset: 0;
+        overflow: hidden;
+        pointer-events: none;
+        z-index: 999998;
+    }
+
+    .cursor-glitter {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: #3e5392;
+        box-shadow: 0 0 8px rgba(52, 65, 151, 0.7);
+        pointer-events: none;
+        animation: softGlitter 0.6s ease-out forwards;
+    }
+
+    @keyframes softGlitter {
+        0% {
+            opacity: 0.9;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        100% {
+            opacity: 0;
+            transform:
+                translate(
+                    calc(-50% + var(--sparkle-x)),
+                    calc(-50% + var(--sparkle-y))
+                )
+                scale(0);
+        }
+    }
+}
+
+@media (hover: none), (pointer: coarse) {
+    .custom-cursor,
+    .cursor-glitter-container {
+        display: none;
+    }
+}
