@@ -200,7 +200,7 @@ function Courses() {
                                         </span>
 
                                         <a
-                                            href="/contact"
+                                            href="/contact-us"
                                             className="course-enquire"
                                         >
                                             Enquire Now
@@ -221,7 +221,7 @@ function Courses() {
                             </p>
                         </div>
 
-                        <a href="/contact" className="courses-contact-btn">
+                        <a href="/contact-us" className="courses-contact-btn">
                             Contact Us
                             <i className="bi bi-arrow-right"></i>
                         </a>

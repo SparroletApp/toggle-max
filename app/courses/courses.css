@@ -224,7 +224,7 @@
 
 .course-card:hover {
     transform: translateY(-6px);
-    border-color: #ffd0d0;
+    border-color: #d0e2ff;
     box-shadow: 0 14px 35px rgba(0, 0, 0, 0.09);
 }
 .course-card-image {
