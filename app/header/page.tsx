@@ -2,61 +2,66 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import "./header.css";
 
 function Header() {
     const [menuOpen, setMenuOpen] = useState(false);
+    const pathname = usePathname();
 
     const closeMenu = () => {
         setMenuOpen(false);
     };
 
+    const navItems = [
+        { name: "Home", href: "/" },
+        { name: "About Us", href: "/about-us" },
+        { name: "Services", href: "/services" },
+        { name: "Blog", href: "/blog" },
+        { name: "Placements", href: "/placements" },
+        { name: "Contact Us", href: "/contact-us" },
+    ];
+
     return (
         <header className="header">
             <div className="header-container">
                 <Link href="/" className="header-logo" onClick={closeMenu}>
-                <img src="/logo.webp"></img>
+                    <img src="/logo.webp" alt="Togglemax Logo" />
                 </Link>
 
                 <nav className={`header-nav ${menuOpen ? "active" : ""}`}>
-                    <Link href="/" className="nav-link active" onClick={closeMenu}>
-                        Home
-                    </Link>
+                    {navItems.map((item) => {
+                        const isActive =
+                            pathname === item.href ||
+                            (item.href !== "/" &&
+                                pathname.startsWith(item.href + "/"));
 
-                    <Link href="/about-us" className="nav-link" onClick={closeMenu}>
-                        About Us
-                    </Link>
-
-                    <Link href="/services" className="nav-link" onClick={closeMenu}>
-                        Services
-                    </Link>
-
-                    <Link href="/blog" className="nav-link" onClick={closeMenu}>
-                        Blog
-                    </Link>
-
-                    <Link href="/placements" className="nav-link" onClick={closeMenu}>
-                        Placements
-                    </Link>
-
-                    <Link
-                        href="/contact"
-                        className="header-contact-btn mobile-contact-btn"
-                        onClick={closeMenu}
-                    >
-                        Contact Us <i className="bi bi-arrow-up-right"></i>
-                    </Link>
+                        return (
+                            <Link
+                                key={item.href}
+                                href={item.href}
+                                className={`nav-link ${isActive ? "active" : ""}`}
+                                onClick={closeMenu}
+                            >
+                                {item.name}
+                            </Link>
+                        );
+                    })}
                 </nav>
+
                 <button
                     className="header-menu-btn"
                     onClick={() => setMenuOpen(!menuOpen)}
-                    aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
+                    aria-label={
+                        menuOpen
+                            ? "Close navigation menu"
+                            : "Open navigation menu"
+                    }
                     aria-expanded={menuOpen}
                     type="button"
                 >
                     <i className={`bi ${menuOpen ? "bi-x-lg" : "bi-list"}`}></i>
                 </button>
-
             </div>
         </header>
     );
