@@ -4,7 +4,7 @@
     position: sticky;
     top: 0;
     z-index: 1000;
-    padding: 15px 5%;
+    padding: 15px 110px;
     background: rgba(255, 255, 255, 0.92);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
@@ -146,6 +146,42 @@
     color: #0C0C52;
     font-size: 25px;
     cursor: pointer;
+}
+
+.nav-link {
+    position: relative;
+    padding: 10px 0;
+    color: #444;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: color 0.3s ease;
+}
+
+.nav-link::after {
+    content: "";
+    position: absolute;
+    bottom: 2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #152441;
+    border-radius: 5px;
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover {
+    color: #152441;
+}
+
+.nav-link.active {
+    color: #152441;
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+    width: 100%;
 }
 
 .mobile-contact-btn {
