@@ -1,13 +1,19 @@
+
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import "./header.css";
 
 function Header() {
     const [menuOpen, setMenuOpen] = useState(false);
+    const [mounted, setMounted] = useState(false);
     const pathname = usePathname();
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const closeMenu = () => {
         setMenuOpen(false);
@@ -16,9 +22,9 @@ function Header() {
     const navItems = [
         { name: "Home", href: "/" },
         { name: "About Us", href: "/about-us" },
-        { name: "Services", href: "/services" },
+        { name: "Courses", href: "/courses" },
         { name: "Blog", href: "/blog" },
-        { name: "Placements", href: "/placements" },
+        // { name: "Students Portfolio", href: "/portfolio" },
         { name: "Contact Us", href: "/contact-us" },
     ];
 
@@ -32,9 +38,10 @@ function Header() {
                 <nav className={`header-nav ${menuOpen ? "active" : ""}`}>
                     {navItems.map((item) => {
                         const isActive =
-                            pathname === item.href ||
-                            (item.href !== "/" &&
-                                pathname.startsWith(item.href + "/"));
+                            mounted &&
+                            (pathname === item.href ||
+                                (item.href !== "/" &&
+                                    pathname.startsWith(item.href + "/")));
 
                         return (
                             <Link
@@ -60,7 +67,11 @@ function Header() {
                     aria-expanded={menuOpen}
                     type="button"
                 >
-                    <i className={`bi ${menuOpen ? "bi-x-lg" : "bi-list"}`}></i>
+                    <i
+                        className={`bi ${
+                            menuOpen ? "bi-x-lg" : "bi-list"
+                        }`}
+                    ></i>
                 </button>
             </div>
         </header>
