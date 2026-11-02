@@ -800,7 +800,7 @@
     color: #6668e7;
 }
 
-.success-heading>p {
+.success-heading p {
     max-width: 620px;
     margin: 0 auto;
     color: #77798d;
@@ -812,7 +812,7 @@
     row-gap: 25px;
 }
 
-.success-stories-row>div {
+.success-stories-row div {
     display: flex;
 }
 
@@ -1482,7 +1482,7 @@
         letter-spacing: -0.6px;
     }
 
-    .success-heading>p {
+    .success-heading p {
         font-size: 14px;
     }
 

@@ -131,7 +131,7 @@
     letter-spacing: -1px;
 }
 
-.contact-header-content>p {
+.contact-header-content p {
     max-width: 520px;
     margin: 0 auto;
 
@@ -156,7 +156,7 @@
             #ffffff 100%);
 }
 
-.contact-content>.container {
+.contact-content.container {
     position: relative;
 }
 
@@ -205,7 +205,7 @@
     line-height: 1.5;
 }
 
-.contact-information>h2 {
+.contact-information.h2 {
     margin: 0 0 12px;
 
     color: var(--contact-dark);
@@ -400,7 +400,7 @@
     letter-spacing: -0.6px;
 }
 
-.contact-form-heading>p {
+.contact-form-heading p {
     margin: 0;
 
     color: var(--contact-muted);
@@ -505,10 +505,7 @@
 .contact-form input:focus,
 .contact-form select:focus,
 .contact-form textarea:focus {
-    /* border-color: var(--contact-primary); */
     background: #ffffff;
-
-    /* box-shadow: 0 0 0 3px rgba(8, 113, 111, 0.09); */
 }
 
 .contact-form input:disabled,
@@ -555,7 +552,7 @@
         transform 0.3s ease;
 }
 
-.contact-submit-button>span:first-child {
+.contact-submit-button span:first-child {
     padding-left: 3px;
 }
 
@@ -652,7 +649,7 @@
     overflow-wrap: anywhere;
 }
 
-.contact-status>i {
+.contact-status i {
     flex-shrink: 0;
     margin-top: 2px;
     font-size: 14px;
@@ -700,7 +697,7 @@
     letter-spacing: -0.6px;
 }
 
-.contact-map-heading>p {
+.contact-map-heading p {
     margin: 0;
 
     color: var(--contact-muted);
@@ -773,7 +770,7 @@
         padding: 30px 23px 25px;
     }
 
-    .contact-information>h2 {
+    .contact-information h2 {
         font-size: 22px;
     }
 
@@ -851,7 +848,7 @@
         font-size: 34px;
     }
 
-    .contact-header-content>p {
+    .contact-header-content p {
         max-width: 430px;
         font-size: 12px;
         line-height: 1.8;
@@ -879,7 +876,7 @@
         border-bottom: 1px solid #e7edef;
     }
 
-    .contact-information>h2 {
+    .contact-information h2 {
         max-width: 400px;
         font-size: 23px;
     }
@@ -929,7 +926,7 @@
         font-size: 23px;
     }
 
-    .contact-form-heading>p {
+    .contact-form-heading p {
         font-size: 11px;
     }
 
@@ -958,7 +955,7 @@
         font-size: 25px;
     }
 
-    .contact-map-heading>p {
+    .contact-map-heading p {
         font-size: 12px;
     }
 
@@ -978,7 +975,7 @@
         font-size: 30px;
     }
 
-    .contact-header-content>p {
+    .contact-header-content p {
         font-size: 11px;
     }
 
@@ -990,7 +987,7 @@
         padding: 24px 17px 21px;
     }
 
-    .contact-information>h2 {
+    .contact-information h2 {
         font-size: 21px;
     }
 

@@ -24,7 +24,7 @@ function Header() {
         { name: "About Us", href: "/about-us" },
         { name: "Courses", href: "/courses" },
         { name: "Blog", href: "/blog" },
-        // { name: "Students Portfolio", href: "/portfolio" },
+        { name: "Students Portfolio", href: "/portfolio" },
         { name: "Contact Us", href: "/contact-us" },
     ];
 

@@ -1,9 +1,11 @@
+import Link from "next/link";
 import "./courses.css";
 
 function Courses() {
     const courses = [
         {
             id: 1,
+            slug: "ui-ux-designing",
             title: "UI/UX Designing",
             category: "DESIGN PROGRAM",
             duration: "3 Months",
@@ -16,6 +18,7 @@ function Courses() {
         },
         {
             id: 2,
+            slug: "graphic-designing",
             title: "Graphic Designing",
             category: "CREATIVE PROGRAM",
             duration: "3 Months",
@@ -27,6 +30,7 @@ function Courses() {
         },
         {
             id: 3,
+            slug: "adobe-xd-figma-master-class",
             title: "Adobe XD & Figma Master Class",
             category: "DESIGN TOOLS",
             duration: "1.5 Months",
@@ -38,6 +42,7 @@ function Courses() {
         },
         {
             id: 4,
+            slug: "ux-guide-for-beginners",
             title: "UX Guide for Beginners",
             category: "BEGINNER PROGRAM",
             duration: "1 Month",
@@ -49,6 +54,7 @@ function Courses() {
         },
         {
             id: 5,
+            slug: "figma-workshop",
             title: "Figma Workshop",
             category: "PRACTICAL WORKSHOP",
             duration: "2 Weeks",
@@ -60,6 +66,7 @@ function Courses() {
         },
         {
             id: 6,
+            slug: "graphic-design-workshop",
             title: "Graphic Design Workshop",
             category: "PRACTICAL WORKSHOP",
             duration: "2 Weeks",
@@ -73,7 +80,6 @@ function Courses() {
 
     return (
         <div className="course-section">
-
             <div className="aboutus-top">
                 <div className="aboutus-overlay">
                     <div className="container">
@@ -85,7 +91,7 @@ function Courses() {
                             <h1>Our Courses</h1>
 
                             <p>
-                                <a href="/">Home</a>
+                                <Link href="/">Home</Link>
                                 <i className="bi bi-chevron-right"></i>
                                 <span>Courses</span>
                             </p>
@@ -93,25 +99,9 @@ function Courses() {
                     </div>
                 </div>
             </div>
+
             <section className="courses-wrapper">
                 <div className="courses-container container">
-                    {/* <div className="courses-heading">
-                        <span className="courses-label">
-                            <span className="courses-label-dot"></span>
-                            TRAINING PROGRAMS
-                        </span>
-
-                        <h2>
-                            Discover Our <span>Courses</span>
-                        </h2>
-
-                        <p>
-                            Focused design training in Kochi to help you
-                            develop practical skills, build your portfolio,
-                            and prepare for your career.
-                        </p>
-                    </div> */}
-
                     <div className="courses-highlight">
                         <div className="courses-highlight-icon">
                             <i className="bi bi-briefcase-fill"></i>
@@ -127,7 +117,6 @@ function Courses() {
                             </p>
                         </div>
                     </div>
-
 
                     <div className="courses-topbar">
                         <div>
@@ -145,9 +134,11 @@ function Courses() {
 
                     <div className="courses-grid">
                         {courses.map((course) => (
-                            <article
-                                className="course-card"
+                            <Link
+                                href={`/courses/${course.slug}`}
+                                className="course-card course-card-link"
                                 key={course.id}
+                                aria-label={`View ${course.title} course`}
                             >
                                 <div className="course-card-image">
                                     <img
@@ -199,16 +190,13 @@ function Courses() {
                                             Practical Learning
                                         </span>
 
-                                        <a
-                                            href="/contact-us"
-                                            className="course-enquire"
-                                        >
-                                            Enquire Now
+                                        <span className="course-enquire">
+                                            View Course
                                             <i className="bi bi-arrow-up-right"></i>
-                                        </a>
+                                        </span>
                                     </div>
                                 </div>
-                            </article>
+                            </Link>
                         ))}
                     </div>
 
@@ -221,10 +209,13 @@ function Courses() {
                             </p>
                         </div>
 
-                        <a href="/contact-us" className="courses-contact-btn">
+                        <Link
+                            href="/contact-us"
+                            className="courses-contact-btn"
+                        >
                             Contact Us
                             <i className="bi bi-arrow-right"></i>
-                        </a>
+                        </Link>
                     </div>
                 </div>
             </section>

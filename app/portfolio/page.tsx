@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import "./portfolio.css";
 
 function Portfolio() {
@@ -17,6 +18,7 @@ function Portfolio() {
     const projects = [
         {
             id: 1,
+            slug: "e-commerce-app-design",
             title: "E-Commerce App Design",
             category: "UI/UX Design",
             student: "UI/UX Student Project",
@@ -27,6 +29,7 @@ function Portfolio() {
         },
         {
             id: 2,
+            slug: "travel-website",
             title: "Travel Website",
             category: "Web Design",
             student: "Web Design Student Project",
@@ -37,6 +40,7 @@ function Portfolio() {
         },
         {
             id: 3,
+            slug: "food-delivery-app",
             title: "Food Delivery App",
             category: "Mobile App",
             student: "UI/UX Student Project",
@@ -47,6 +51,7 @@ function Portfolio() {
         },
         {
             id: 4,
+            slug: "brand-identity-design",
             title: "Brand Identity Design",
             category: "Graphic Design",
             student: "Graphic Design Student Project",
@@ -57,6 +62,7 @@ function Portfolio() {
         },
         {
             id: 5,
+            slug: "finance-dashboard",
             title: "Finance Dashboard",
             category: "UI/UX Design",
             student: "UI/UX Student Project",
@@ -67,6 +73,7 @@ function Portfolio() {
         },
         {
             id: 6,
+            slug: "fitness-mobile-app",
             title: "Fitness Mobile App",
             category: "Mobile App",
             student: "UI/UX Student Project",
@@ -86,27 +93,28 @@ function Portfolio() {
 
     return (
         <section className="portfolio" id="student-portfolio">
-            <div className="portfolio-container">
+            {/* Page Banner */}
+            <div className="aboutus-top portfolio-top">
+                <div className="aboutus-overlay">
+                    <div className="container">
+                        <div className="aboutus-content">
+                            <span className="aboutus-subtitle">
+                                EXPLORE OUR STUDENT WORK
+                            </span>
 
-                <div className="portfolio-heading">
-                    <span className="portfolio-eyebrow">
-                        <span className="portfolio-eyebrow-line"></span>
-                        STUDENT SHOWCASE
-                    </span>
+                            <h1>Student Portfolio</h1>
 
-                    <h2>
-                        Creativity in Action.
-                        <br />
-                        <span>Designs That Inspire.</span>
-                    </h2>
-
-                    <p>
-                        Explore the creative work of our students at Togglemax.
-                        From intuitive UI/UX experiences to stunning websites
-                        and mobile applications, discover ideas transformed
-                        into impactful digital designs.
-                    </p>
+                            <p>
+                                <a href="/">Home</a>
+                                <i className="bi bi-chevron-right"></i>
+                                <span>Student Portfolio</span>
+                            </p>
+                        </div>
+                    </div>
                 </div>
+            </div>
+
+            <div className="portfolio-container container">
 
                 <div className="portfolio-stats">
                     <div className="portfolio-stat">
@@ -142,6 +150,7 @@ function Portfolio() {
                     </div>
                 </div>
 
+                {/* Category Filters */}
                 <div className="portfolio-filter-wrapper">
                     <div
                         className="portfolio-filters"
@@ -169,11 +178,14 @@ function Portfolio() {
                     </span>
                 </div>
 
+                {/* Clickable Project Cards */}
                 <div className="portfolio-grid">
                     {filteredProjects.map((project) => (
-                        <article
+                        <Link
+                            href={`/portfolio/${project.slug}`}
                             className="portfolio-card"
                             key={project.id}
+                            aria-label={`View ${project.title} project`}
                         >
                             <div className="portfolio-card-image">
                                 <img
@@ -188,7 +200,9 @@ function Portfolio() {
 
                                 <div className="portfolio-image-overlay">
                                     <span className="portfolio-overlay-icon">
-                                        <i className={`bi ${project.icon}`}></i>
+                                        <i
+                                            className={`bi ${project.icon}`}
+                                        ></i>
                                     </span>
                                 </div>
                             </div>
@@ -217,10 +231,11 @@ function Portfolio() {
                                     </span>
                                 </div>
                             </div>
-                        </article>
+                        </Link>
                     ))}
                 </div>
 
+                {/* Empty State */}
                 {filteredProjects.length === 0 && (
                     <div className="portfolio-empty">
                         <i className="bi bi-images"></i>
@@ -229,6 +244,7 @@ function Portfolio() {
                     </div>
                 )}
 
+                {/* Call to Action */}
                 <div className="portfolio-cta">
                     <div className="portfolio-cta-icon">
                         <i className="bi bi-lightbulb"></i>
@@ -242,15 +258,14 @@ function Portfolio() {
                         </p>
                     </div>
 
-                    <a
-                        href="https://togglemax.com/contact/"
+                    <Link
+                        href="/contact-us"
                         className="portfolio-cta-button"
                     >
                         Start Your Journey
                         <i className="bi bi-arrow-up-right"></i>
-                    </a>
+                    </Link>
                 </div>
-
             </div>
         </section>
     );
