@@ -1,0 +1,27 @@
+
+.tm-portfolio-owner {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    color: #454545;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.tm-portfolio-owner i {
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 86, 86, 0.10);
+    color: #ff5656;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.tm-portfolio-owner:hover {
+    color: #ff5656;
+}

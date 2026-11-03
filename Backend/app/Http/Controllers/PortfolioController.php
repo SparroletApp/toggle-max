@@ -58,7 +58,7 @@ class PortfolioController extends Controller
 
             'details' => ['nullable', 'array'],
             'details.*.title' => ['required', 'string'],
-            'details.*.heading' => ['required', 'string'],
+            'details.*.desc' => ['required', 'string'],
             'objectives' => ['nullable', 'array'],
             'objectives.*.title' => ['required', 'string'],
             'objectives.*.desc' => ['required', 'string'],
@@ -123,7 +123,7 @@ class PortfolioController extends Controller
             'remove_image' => ['sometimes', 'boolean'],
             'details' => ['sometimes', 'nullable', 'array'],
             'details.*.title' => ['required', 'string'],
-            'details.*.heading' => ['required', 'string'],
+            'details.*.desc' => ['required', 'string'],
             'objectives' => ['sometimes', 'nullable', 'array'],
             'objectives.*.title' => ['required', 'string'],
             'objectives.*.desc' => ['required', 'string'],
