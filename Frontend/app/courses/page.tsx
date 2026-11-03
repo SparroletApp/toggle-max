@@ -202,10 +202,13 @@ function Courses() {
 
                                             <h4>{course.title}</h4>
 
-                                            <p className="course-description">
-                                                {course.description ||
-                                                    "Explore this course to learn more about the curriculum and practical training."}
-                                            </p>
+                                            <div
+                                                className="course-description"
+                                                dangerouslySetInnerHTML={{
+                                                    __html: course.description ||
+                                                        "Explore this course to learn more about the curriculum and practical training.",
+                                                }}
+                                            />
 
                                             <div className="course-tags">
                                                 {course.key_points

@@ -9,50 +9,110 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Swiper, SwiperSlide } from "swiper/react";
+import faqService from "../apiservice/faqservice";
+import { Course, getCourses } from "../apiservice/coursesservice";
+
+interface FAQ {
+    id: number;
+    question: string;
+    answer: string;
+}
+
 function LandingPage() {
 
-    const faqArray = [
-        {
-            question: "What courses does Togglemax offer?",
-            answer:
-                "Togglemax offers professional training programs in UI/UX Designing, Graphic Designing, Figma, Adobe XD, and other creative design skills to help students build industry-relevant expertise."
-        },
-        {
-            question: "Are online and offline classes available?",
-            answer:
-                "Yes, Togglemax offers flexible learning options, including online and offline classes, along with recorded sessions to help students learn at their own pace."
-        },
-        {
-            question: "Do I need any prior design experience to join?",
-            answer:
-                "No prior design experience is required for beginner-friendly courses. Our structured training helps you understand the fundamentals and gradually develop practical design skills."
-        },
-        {
-            question: "Will I get practical project experience?",
-            answer:
-                "Yes, our training includes hands-on projects, practical exercises, and real-world design activities that help you build your portfolio and gain confidence."
-        },
-        {
-            question: "How long do the courses take to complete?",
-            answer:
-                "Course duration depends on the program you choose. We offer different learning options, ranging from short workshops to comprehensive courses lasting several months."
-        },
-        {
-            question: "Does Togglemax provide career guidance?",
-            answer:
-                "Yes, Togglemax focuses on industry-relevant skills, portfolio development, and career guidance to help students prepare for opportunities in the IT and design industries."
-        },
-        {
-            question: "Which tools will I learn during the training?",
-            answer:
-                "Depending on your selected course, you can learn tools such as Figma, Adobe XD, and other industry-standard design applications used to create modern digital experiences."
-        },
-        {
-            question: "How can I enroll in a Togglemax course?",
-            answer:
-                "You can contact the Togglemax team to learn more about available courses, schedules, fees, and enrollment. Our team will help you choose a program that suits your goals."
-        }
-    ];
+    const [faqArray, setFaqArray] = useState<FAQ[]>([]);
+    const [openFaq, setOpenFaq] = useState<number | null>(null);
+    const [faqLoading, setFaqLoading] = useState(true);
+    const [courses, setCourses] = useState<Course[]>([]);
+    const [coursesLoading, setCoursesLoading] = useState(true);
+    const [coursesError, setCoursesError] = useState("");
+
+    useEffect(() => {
+        let active = true;
+
+        const fetchFaqs = async () => {
+            try {
+                const response = await faqService.getAllFaqs();
+
+                console.log("Complete FAQ response:", response);
+
+                let result = response?.data ?? response;
+
+                if (typeof result === "string") {
+                    result = result
+                        .replace(/^```(?:php|json)?\s*/i, "")
+                        .replace(/\s*```$/i, "")
+                        .trim();
+
+                    result = JSON.parse(result);
+                }
+
+                console.log("Parsed FAQ data:", result);
+
+                if (active && result?.success && Array.isArray(result.data)) {
+                    setFaqArray(result.data);
+                } else if (active) {
+                    setFaqArray([]);
+                }
+
+            } catch (error) {
+                console.error("FAQ API ERROR:", error);
+
+                if (active) {
+                    setFaqArray([]);
+                }
+            } finally {
+                if (active) {
+                    setFaqLoading(false);
+                }
+            }
+        };
+
+        fetchFaqs();
+
+        return () => {
+            active = false;
+        };
+    }, []);
+
+    useEffect(() => {
+        let active = true;
+
+        const fetchCourses = async () => {
+            try {
+                setCoursesLoading(true);
+                setCoursesError("");
+
+                const data = await getCourses();
+
+                console.log("Courses received in LandingPage:", data);
+
+                if (active) {
+                    setCourses(Array.isArray(data) ? data : []);
+                }
+
+            } catch (error) {
+                console.error("Failed to fetch courses:", error);
+
+                if (active) {
+                    setCoursesError(
+                        "Unable to load courses. Please try again later."
+                    );
+                }
+
+            } finally {
+                if (active) {
+                    setCoursesLoading(false);
+                }
+            }
+        };
+
+        fetchCourses();
+
+        return () => {
+            active = false;
+        };
+    }, []);
 
     const integratedArray = [
         {
@@ -136,62 +196,7 @@ function LandingPage() {
         },
     ];
 
-    const coursesArray = [
-        {
-            icon: "bi bi-palette",
-            title: "UI UX Designing",
-            desc: "Learn UI and UX design principles, wireframing, prototyping, and user-centered design to create engaging digital experiences.",
-            duration: "3 Months",
-            schedule: "5 Days a Week",
-            image: "https://togglemax.com/wp-content/uploads/2023/02/uiux.jpg",
-            button: "Explore Course",
-        },
-        {
-            icon: "bi bi-brush",
-            title: "Graphic Designing",
-            desc: "Develop creative skills in graphic design, visual communication, typography, and digital design using industry-standard tools.",
-            duration: "3 Months",
-            schedule: "5 Days a Week",
-            image: "https://togglemax.com/wp-content/uploads/2022/11/thumb.jpg",
-            button: "Explore Course",
-        },
-        {
-            icon: "bi bi-bezier2",
-            title: "Adobe XD & Figma Master Class",
-            desc: "Master Figma and Adobe XD to design modern interfaces, create interactive prototypes, and build professional design projects.",
-            duration: "1.5 Months",
-            schedule: "5 Days a Week",
-            image: "https://togglemax.com/wp-content/uploads/2022/11/thumb.jpg",
-            button: "Explore Course",
-        },
-        {
-            icon: "bi bi-lightbulb",
-            title: "UX Guide for Beginners",
-            desc: "Understand user experience fundamentals, user research, information architecture, and usability principles.",
-            duration: "1 Month",
-            schedule: "5 Days a Week",
-            image: "https://togglemax.com/wp-content/uploads/2023/02/uiux.jpg",
-            button: "Explore Course",
-        },
-        {
-            icon: "bi bi-vector-pen",
-            title: "Figma Workshop",
-            desc: "Gain practical experience with Figma tools, components, auto layout, responsive interfaces, and interactive prototyping.",
-            duration: "2 Weeks",
-            schedule: "5 Days a Week",
-            image: "https://togglemax.com/wp-content/uploads/2023/02/uiux.jpg",
-            button: "Explore Workshop",
-        },
-        {
-            icon: "bi bi-easel",
-            title: "Graphic Design Workshop",
-            desc: "Explore creative design techniques, visual composition, typography, and practical graphic design through hands-on activities.",
-            duration: "2 Weeks",
-            schedule: "5 Days a Week",
-            image: "https://togglemax.com/wp-content/uploads/2023/02/uiux.jpg",
-            button: "Explore Workshop",
-        },
-    ];
+
 
     const chooseUsArray = [
         {
@@ -237,7 +242,6 @@ function LandingPage() {
         { count: 5, suffix: "", name: "DAYS A WEEK" },
     ];
 
-    const [openFaq, setOpenFaq] = useState<number | null>(null);
     const [startCount, setStartCount] = useState(false);
     const countRef = useRef<HTMLDivElement>(null);
     const [counts, setCounts] = useState([0, 0, 0, 0]);
@@ -453,7 +457,7 @@ function LandingPage() {
                                 and career-focused training empower every learner to grow with
                                 confidence and achieve their goals.
                             </div>
-                          
+
                         </div>
 
                     </div>
@@ -509,45 +513,126 @@ function LandingPage() {
                 </div>
 
                 <div className="row">
-                    {coursesArray.map((item, index) => (
-                        <div
-                            className="col-lg-4 col-md-6 col-12 card-margin"
-                            key={index}
-                        >
-                            <div className="card-courses">
-                                <div className="course-image">
-                                    <img src={item.image} alt={item.title} />
 
-                                    <div className="course-icon">
-                                        <i className={item.icon}></i>
-                                    </div>
-                                </div>
+                    {coursesLoading ? (
 
-                                <div className="course-content">
-                                    <h4>{item.title}</h4>
-
-                                    <p>{item.desc}</p>
-
-                                    <div className="course-duration">
-                                        <span>
-                                            <i className="bi bi-clock"></i>
-                                            {item.duration}
-                                        </span>
-
-                                        <span>
-                                            <i className="bi bi-calendar-week"></i>
-                                            {item.schedule}
-                                        </span>
-                                    </div>
-
-                                    <button className="course-button">
-                                        {item.button}
-                                        <i className="bi bi-arrow-right"></i>
-                                    </button>
-                                </div>
-                            </div>
+                        <div className="col-12 home-courses-status">
+                            <div className="spinner-border"></div>
+                            <p>Loading courses...</p>
                         </div>
-                    ))}
+
+                    ) : coursesError ? (
+
+                        <div className="col-12 home-courses-status home-courses-error">
+                            <i className="bi bi-exclamation-circle"></i>
+                            <p>{coursesError}</p>
+                        </div>
+
+                    ) : courses.length === 0 ? (
+
+                        <div className="col-12 home-courses-status">
+                            <i className="bi bi-journal-x"></i>
+                            <p>No courses available right now.</p>
+                        </div>
+
+                    ) : (
+
+                        courses.slice(0, 6).map((item) => {
+
+                            const slug = item.title
+                                .toLowerCase()
+                                .trim()
+                                .replace(/[^a-z0-9]+/g, "-")
+                                .replace(/^-|-$/g, "");
+
+                            const duration = [
+                                item.months
+                                    ? `${item.months} ${item.months === 1 ? "Month" : "Months"}`
+                                    : null,
+                                item.days
+                                    ? `${item.days} ${item.days === 1 ? "Day" : "Days"}`
+                                    : null,
+                            ]
+                                .filter(Boolean)
+                                .join(" ");
+
+                            return (
+                                <div
+                                    className="col-lg-4 col-md-6 col-12 card-margin"
+                                    key={item.id}
+                                >
+                                    <div className="card-courses">
+
+                                        <div className="course-image">
+
+                                            {item.image_url ? (
+                                                <img
+                                                    src={item.image_url}
+                                                    alt={item.title}
+                                                />
+                                            ) : (
+                                                <div className="course-image-placeholder">
+                                                    <i className="bi bi-image"></i>
+                                                </div>
+                                            )}
+
+                                            <div className="course-icon">
+                                                <i className="bi bi-palette"></i>
+                                            </div>
+
+                                        </div>
+
+                                        <div className="course-content">
+
+                                            <h4>{item.title}</h4>
+
+                                            <div className="desc-course-home">
+                                                {item.description ? (
+                                                    <div
+                                                        dangerouslySetInnerHTML={{
+                                                            __html: item.description,
+                                                        }}
+                                                    />
+                                                ) : (
+                                                    "Explore this course to learn more about the curriculum and practical training."
+                                                )}
+                                            </div>
+
+                                            <div className="course-duration">
+
+                                                {duration && (
+                                                    <span>
+                                                        <i className="bi bi-clock"></i>
+                                                        {duration}
+                                                    </span>
+                                                )}
+
+                                                <span>
+                                                    <i className="bi bi-calendar-week"></i>
+                                                    5 Days a Week
+                                                </span>
+
+                                            </div>
+
+                                            <button
+                                                className="course-button"
+                                                type="button"
+                                                onClick={() => {
+                                                    window.location.href = `/courses/${slug}?id=${item.id}`;
+                                                }}
+                                            >
+                                                Explore Course
+                                                <i className="bi bi-arrow-right"></i>
+                                            </button>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            );
+                        })
+                    )}
+
                 </div>
             </div>
 
@@ -649,7 +734,7 @@ function LandingPage() {
 
                                             <div className="success-profile-info">
                                                 <h4>{item.name}</h4>
-                                        
+
                                             </div>
                                         </div>
                                     </div>
@@ -666,7 +751,7 @@ function LandingPage() {
                                 <i className="bi bi-arrow-left"></i>
                             </button>
 
-                        
+
 
                             <button
                                 type="button"
@@ -716,6 +801,7 @@ function LandingPage() {
 
             <div className="faq">
                 <div className="container">
+
                     <div className="faq-heading">
                         <h2>Frequently Asked Questions</h2>
 
@@ -725,73 +811,108 @@ function LandingPage() {
                         </div>
                     </div>
 
-                    <div className="row">
-                        {faqArray.map((item, index) => (
-                            <div
-                                className="col-lg-6 col-md-6 col-12"
-                                key={index}
-                            >
+                    {faqLoading ? (
+
+                        <div className="faq-loading">
+                            <div className="spinner-border text-primary"></div>
+                            <p>Loading FAQs...</p>
+                        </div>
+
+                    ) : faqArray.length === 0 ? (
+
+                        <div className="faq-empty">
+                            <i className="bi bi-chat-square-text"></i>
+                            <p>No FAQs available at the moment.</p>
+                        </div>
+
+                    ) : (
+
+                        <div className="row">
+
+                            {faqArray.map((item, index) => (
+
                                 <div
-                                    className={`faq-card ${openFaq === index ? "active" : ""
-                                        }`}
+                                    className="col-lg-6 col-md-6 col-12"
+                                    key={item.id}
                                 >
-                                    <button
-                                        type="button"
-                                        className="faq-question"
-                                        onClick={() =>
-                                            setOpenFaq(
-                                                openFaq === index ? null : index
-                                            )
-                                        }
-                                        aria-expanded={openFaq === index}
-                                        aria-controls={`faq-answer-${index}`}
-                                    >
-                                        <span className="faq-question-text">
-                                            <span className="faq-number">
-                                                {String(index + 1).padStart(2, "0")}
-                                            </span>
-
-                                            {item.question}
-                                        </span>
-
-                                        <span className="faq-toggle">
-                                            <i
-                                                className={`bi ${openFaq === index
-                                                    ? "bi-dash-lg"
-                                                    : "bi-plus-lg"
-                                                    }`}
-                                            ></i>
-                                        </span>
-                                    </button>
 
                                     <div
-                                        id={`faq-answer-${index}`}
-                                        className={`faq-answer ${openFaq === index ? "show" : ""
+                                        className={`faq-card ${openFaq === index ? "active" : ""
                                             }`}
-                                        aria-hidden={openFaq !== index}
                                     >
-                                        <div className="faq-answer-content">
-                                            {item.answer}
+
+                                        <button
+                                            type="button"
+                                            className="faq-question"
+                                            onClick={() =>
+                                                setOpenFaq(
+                                                    openFaq === index ? null : index
+                                                )
+                                            }
+                                            aria-expanded={openFaq === index}
+                                            aria-controls={`faq-answer-${item.id}`}
+                                        >
+
+                                            <span className="faq-question-text">
+
+                                                <span className="faq-number">
+                                                    {String(index + 1).padStart(2, "0")}
+                                                </span>
+
+                                                {item.question}
+
+                                            </span>
+
+                                            <span className="faq-toggle">
+
+                                                <i
+                                                    className={`bi ${openFaq === index
+                                                        ? "bi-dash-lg"
+                                                        : "bi-plus-lg"
+                                                        }`}
+                                                ></i>
+
+                                            </span>
+
+                                        </button>
+
+                                        <div
+                                            id={`faq-answer-${item.id}`}
+                                            className={`faq-answer ${openFaq === index ? "show" : ""
+                                                }`}
+                                            aria-hidden={openFaq !== index}
+                                        >
+
+                                            <div className="faq-answer-content">
+                                                {item.answer}
+                                            </div>
+
                                         </div>
+
                                     </div>
+
                                 </div>
-                            </div>
-                        ))}
-                    </div>
+
+                            ))}
+
+                        </div>
+
+                    )}
+
                 </div>
             </div>
             <div className="banner-container">
                 <div className="container">
-            <div className="banner-card">
-                <h1>Ready to Begin Your<br />
-                    <span>Design Journey?</span></h1>
-                <div className="design-desc">Take the first step towards your dream career today. Our expert <br />mentors will guide you
-                    from the basics to building a professional portfolio.</div>
-                <div className="explore-banner">
-                    <button className="courses-banner">Explore Our Courses</button>
-                    <button className="book-mentorship">Book a Free Mentorship Session</button>
-                </div>
-                </div>
+                    <div className="banner-card">
+                        <h1>Ready to Begin Your<br />
+                            <span>Design Journey?</span></h1>
+                        <div className="design-desc">Take the first step towards your dream career today. Our expert <br />mentors will guide you
+                            from the basics to building a professional portfolio.</div>
+                        <div className="explore-banner">
+                            <button className="courses-banner">Explore Our Courses</button>
+                            <button className="book-mentorship">Book a Free Mentorship Session</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </>

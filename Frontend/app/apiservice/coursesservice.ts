@@ -2,8 +2,14 @@ import api from "./apiservice";
 
 export interface CourseKeyPoint {
     title: string;
-    name: string;
-    description: string;
+    name?: string;
+    description?: string;
+}
+
+export interface CourseCurriculumPoint {
+    title: string;
+    desc: string;
+    points: string[];
 }
 
 export interface Course {
@@ -18,7 +24,7 @@ export interface Course {
     badge: string | null;
     curriculum_title: string | null;
     curriculum_description: string | null;
-    curriculum_points: string[] | null;
+    curriculum_points: CourseCurriculumPoint[] | null;
     created_at?: string;
     updated_at?: string;
 }
@@ -33,29 +39,53 @@ export interface CoursePayload {
     badge?: string | null;
     curriculum_title?: string | null;
     curriculum_description?: string | null;
-    curriculum_points?: string[];
+    curriculum_points?: CourseCurriculumPoint[];
 }
 
 interface ApiResponse<T> {
     success: boolean;
     message: string;
     data: T;
-}   
+}
+
+const parseResponse = <T,>(response: any): ApiResponse<T> => {
+    let result = response;
+    if (typeof result === "string") {
+        result = result
+            .replace(/^```(?:php|json)?\s*/i, "")
+            .replace(/\s*```$/i, "")
+            .trim();
+
+        result = JSON.parse(result);
+    }
+
+    return result;
+};
 
 export const getCourses = async (): Promise<Course[]> => {
-    const response = await api.get<ApiResponse<Course[]>>(
-        "/courses"
-    );
+    const response = await api.get("/courses");
 
-    return response.data.data;
+    console.log("Courses API response:", response.data);
+
+    const result = parseResponse<Course[]>(response.data);
+
+    if (result?.success && Array.isArray(result.data)) {
+        return result.data;
+    }
+
+    return [];
 };
 
 export const getCourseById = async (
     id: number | string
 ): Promise<Course> => {
-    const response = await api.get<ApiResponse<Course>>(
-        `/courses/${id}`
-    );
+    const response = await api.get(`/courses/${id}`);
 
-    return response.data.data;
+    const result = parseResponse<Course>(response.data);
+
+    if (result?.success && result.data) {
+        return result.data;
+    }
+
+    throw new Error(result?.message || "Unable to fetch course.");
 };

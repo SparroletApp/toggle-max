@@ -1,0 +1,197 @@
+/* =====================================
+   EDIT FAQ PAGE
+===================================== */
+
+.edit-faq {
+    width: 100%;
+    min-height: 100vh;
+    padding: 30px 0 60px;
+}
+
+/* =====================================
+   FORM CARD
+===================================== */
+
+.edit-faq .tm-form-card {
+    background: #ffffff;
+    border: 1px solid #eeeeF2;
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 5px 25px rgba(32, 33, 43, 0.04);
+    margin-top: 25px;
+}
+
+/* =====================================
+   FORM HEADER
+===================================== */
+
+.edit-faq .tm-form-card-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding-bottom: 24px;
+    margin-bottom: 28px;
+    border-bottom: 1px solid #eeeeF2;
+}
+
+.edit-faq .tm-form-card-icon {
+    width: 52px;
+    height: 52px;
+    min-width: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 13px;
+    background: #f0f2ff;
+    color: #6668e7;
+    font-size: 23px;
+}
+
+.edit-faq .tm-form-card-header h2 {
+    font-size: 19px;
+    font-weight: 700;
+    color: #20212b;
+    margin: 0 0 5px;
+}
+
+.edit-faq .tm-form-card-header p {
+    font-size: 13px;
+    color: #747784;
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* =====================================
+   FORM GROUP
+===================================== */
+
+.edit-faq .tm-form-group {
+    margin-bottom: 25px;
+}
+
+.edit-faq .tm-form-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #20212b;
+    margin-bottom: 10px;
+}
+
+.edit-faq .tm-required {
+    color: #e74c3c;
+    margin-left: 4px;
+}
+
+/* =====================================
+   INPUT FIELDS
+===================================== */
+
+.edit-faq .tm-form-control {
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 15px;
+    border: 1px solid #e2e3eb;
+    border-radius: 9px;
+    background: #ffffff;
+    color: #20212b;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.25s ease;
+    box-shadow: none;
+}
+
+.edit-faq .tm-form-control::placeholder {
+    color: #a1a3ad;
+    font-size: 13px;
+}
+
+.edit-faq .tm-form-control:focus {
+    border-color: #6668e7;
+    box-shadow: 0 0 0 3px rgba(102, 104, 231, 0.10);
+}
+
+/* =====================================
+   ANSWER TEXTAREA
+===================================== */
+
+.edit-faq .edit-faq-answer {
+    min-height: 190px;
+    resize: vertical;
+    line-height: 1.7;
+}
+
+/* =====================================
+   FORM HINT
+===================================== */
+
+.edit-faq .tm-form-hint {
+    font-size: 12px;
+    color: #9294a0;
+    margin-top: 7px;
+}
+
+/* =====================================
+   FORM ACTIONS
+===================================== */
+
+.edit-faq .tm-form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    padding-top: 22px;
+    margin-top: 10px;
+    border-top: 1px solid #eeeeF2;
+}
+
+.edit-faq .tm-form-actions .tm-btn {
+    min-width: 130px;
+    justify-content: center;
+}
+
+.edit-faq .tm-form-actions .tm-btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+/* =====================================
+   RESPONSIVE
+===================================== */
+
+@media (max-width: 767px) {
+
+    .edit-faq {
+        padding: 20px 0 40px;
+    }
+
+    .edit-faq .tm-form-card {
+        padding: 20px 16px;
+        margin-top: 20px;
+    }
+
+    .edit-faq .tm-form-card-header {
+        gap: 12px;
+        margin-bottom: 22px;
+    }
+
+    .edit-faq .tm-form-card-icon {
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        font-size: 20px;
+    }
+
+    .edit-faq .tm-form-card-header h2 {
+        font-size: 17px;
+    }
+
+    .edit-faq .tm-form-actions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+    .edit-faq .tm-form-actions .tm-btn {
+        width: 100%;
+    }
+
+}

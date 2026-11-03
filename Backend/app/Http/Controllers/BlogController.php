@@ -113,115 +113,152 @@ class BlogController extends Controller
         }
     }
 
-    public function update(Request $request)
-    {
-        $validated = $request->validate([
-            'id' => ['required', 'integer', 'min:1'],
+   public function update(Request $request)
+{
+    $validated = $request->validate([
+        'id' => ['required', 'integer', 'min:1'],
 
-            'badge_title' => ['sometimes', 'nullable', 'string', 'max:255'],
-            'title' => ['sometimes', 'required', 'string', 'max:255'],
-            'desc' => ['sometimes', 'nullable', 'string'],
+        'badge_title' => ['sometimes', 'nullable', 'string', 'max:255'],
+        'title' => ['sometimes', 'required', 'string', 'max:255'],
+        'desc' => ['sometimes', 'nullable', 'string'],
 
-            'main_image' => [
-                'sometimes',
-                'nullable',
-                'image',
-                'mimes:jpg,jpeg,png,webp',
-                'max:4096',
-            ],
+        'main_image' => [
+            'sometimes',
+            'nullable',
+            'image',
+            'mimes:jpg,jpeg,png,webp',
+            'max:4096',
+        ],
 
-            'images' => ['sometimes', 'array', 'max:10'],
-            'images.*' => [
-                'required',
-                'image',
-                'mimes:jpg,jpeg,png,webp',
-                'max:4096',
-            ],
+        'images' => ['sometimes', 'array', 'max:10'],
+        'images.*' => [
+            'required',
+            'image',
+            'mimes:jpg,jpeg,png,webp',
+            'max:4096',
+        ],
+        'existing_images' => ['sometimes', 'array', 'max:10'],
+        'existing_images.*' => ['required', 'string'],
 
-            'questions_answers' => ['sometimes', 'nullable', 'array'],
-            'questions_answers.*.question' => [
-                'required',
-                'string',
-            ],
-            'questions_answers.*.answer' => [
-                'required',
-                'string',
-            ],
+        'questions_answers' => ['sometimes', 'nullable', 'array'],
+        'questions_answers.*.question' => [
+            'required',
+            'string',
+        ],
+        'questions_answers.*.answer' => [
+            'required',
+            'string',
+        ],
 
-            'remove_main_image' => ['sometimes', 'boolean'],
+        'remove_main_image' => ['sometimes', 'boolean'],
+    ]);
 
-            'remove_images' => ['sometimes', 'boolean'],
-        ]);
+    $blog = Blog::find($validated['id']);
 
-        $blog = Blog::find($validated['id']);
+    if (!$blog) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Blog not found.',
+        ], 404);
+    }
 
-        if (!$blog) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Blog not found.',
-            ], 404);
+    $uploadedFiles = [];
+
+    try {
+
+        if ($request->boolean('remove_main_image')) {
+
+            if ($blog->main_image) {
+                Storage::disk('public')->delete($blog->main_image);
+            }
+
+            $blog->main_image = null;
+
+        } elseif ($request->hasFile('main_image')) {
+
+            $newMainImage = $request->file('main_image')
+                ->store('blogs', 'public');
+
+            $uploadedFiles[] = $newMainImage;
+
+            if ($blog->main_image) {
+                Storage::disk('public')->delete($blog->main_image);
+            }
+
+            $blog->main_image = $newMainImage;
         }
 
-        $uploadedFiles = [];
+        $oldImages = $blog->images ?? [];
 
-        try {
-            if ($request->boolean('remove_main_image')) {
-                if ($blog->main_image) {
-                    Storage::disk('public')->delete($blog->main_image);
-                }
+        if (is_string($oldImages)) {
+            $oldImages = json_decode($oldImages, true) ?? [];
+        }
+        $retainedImages = $request->input('existing_images', []);
+        $retainedImages = array_values(array_intersect(
+            $oldImages,
+            $retainedImages
+        ));
 
-                $blog->main_image = null;
-            } elseif ($request->hasFile('main_image')) {
-                $newMainImage = $request->file('main_image')
-                    ->store('blogs', 'public');
+        $removedImages = array_diff(
+            $oldImages,
+            $retainedImages
+        );
+        if (!empty($removedImages)) {
+            Storage::disk('public')->delete(
+                array_values($removedImages)
+            );
+        }
+        $finalImages = $retainedImages;
+        if ($request->hasFile('images')) {
 
-                $uploadedFiles[] = $newMainImage;
+            foreach ($request->file('images') as $image) {
 
-                if ($blog->main_image) {
-                    Storage::disk('public')->delete($blog->main_image);
-                }
+                $path = $image->store('blogs', 'public');
 
-                $blog->main_image = $newMainImage;
+                $finalImages[] = $path;
+
+                $uploadedFiles[] = $path;
             }
+        }
+        if (count($finalImages) > 10) {
 
-            if ($request->boolean('remove_images')) {
-                Storage::disk('public')->delete($blog->images ?? []);
-
-                $blog->images = [];
-            } elseif ($request->hasFile('images')) {
-                $newImagePaths = [];
-
-                foreach ($request->file('images') as $image) {
-                    $path = $image->store('blogs', 'public');
-
-                    $newImagePaths[] = $path;
-                    $uploadedFiles[] = $path;
-                }
-
-                Storage::disk('public')->delete($blog->images ?? []);
-
-                $blog->images = $newImagePaths;
-            }
-
-            foreach (['badge_title', 'title', 'desc', 'questions_answers'] as $field) {
-                if (array_key_exists($field, $validated)) {
-                    $blog->{$field} = $validated[$field];
-                }
-            }
-
-            $blog->save();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Blog updated successfully.',
-                'data' => $blog->fresh(),
-            ], 200);
-        } catch (\Throwable $e) {
             Storage::disk('public')->delete($uploadedFiles);
 
-            throw $e;
+            return response()->json([
+                'success' => false,
+                'message' => 'You can upload a maximum of 10 additional images.',
+            ], 422);
         }
+
+        $blog->images = array_values($finalImages);
+
+        foreach ([
+            'badge_title',
+            'title',
+            'desc',
+            'questions_answers',
+        ] as $field) {
+
+            if (array_key_exists($field, $validated)) {
+                $blog->{$field} = $validated[$field];
+            }
+        }
+
+        $blog->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Blog updated successfully.',
+            'data' => $blog->fresh(),
+        ], 200);
+
+    } catch (\Throwable $e) {
+
+        Storage::disk('public')->delete($uploadedFiles);
+
+        throw $e;
     }
+}
 
 
     public function destroy(Request $request)

@@ -1,0 +1,215 @@
+/* =====================================
+   VIEW FAQ PAGE
+===================================== */
+
+.view-faq {
+    width: 100%;
+    min-height: 100vh;
+    padding: 30px 0 60px;
+}
+
+/* =====================================
+   MAIN CARD
+===================================== */
+
+.view-faq-card {
+    background: #ffffff;
+    border: 1px solid #eeeeF2;
+    border-radius: 17px;
+    padding: 30px;
+    margin-top: 25px;
+    box-shadow: 0 5px 25px rgba(32, 33, 43, 0.04);
+}
+
+/* =====================================
+   CARD HEADER
+===================================== */
+
+.view-faq-card-header {
+    display: flex;
+    align-items: center;
+    gap: 17px;
+    padding-bottom: 27px;
+    border-bottom: 1px solid #eeeeF2;
+}
+
+.view-faq-icon {
+    width: 58px;
+    height: 58px;
+    min-width: 58px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 15px;
+    background: #f0f2ff;
+    color: #6668e7;
+    font-size: 25px;
+}
+
+.view-faq-heading {
+    flex: 1;
+}
+
+.view-faq-heading > span {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    color: #6668e7;
+    margin-bottom: 5px;
+}
+
+.view-faq-heading h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #20212b;
+    margin: 0 0 5px;
+}
+
+.view-faq-heading p {
+    font-size: 12px;
+    color: #9294a0;
+    margin: 0;
+}
+
+.view-faq-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 13px;
+    border-radius: 30px;
+    background: #eaf8f0;
+    color: #23965b;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* =====================================
+   FAQ SECTIONS
+===================================== */
+
+.view-faq-section {
+    padding: 27px 0;
+    border-bottom: 1px solid #eeeeF2;
+}
+
+.view-faq-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    color: #747784;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+}
+
+.view-faq-label-icon {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: #f0f2ff;
+    color: #6668e7;
+    font-size: 14px;
+}
+
+/* =====================================
+   QUESTION
+===================================== */
+
+.view-faq-question {
+    padding: 19px 21px;
+    background: #f8f8ff;
+    border: 1px solid #eeeeff;
+    border-left: 4px solid #6668e7;
+    border-radius: 10px;
+    color: #20212b;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.7;
+    word-break: break-word;
+}
+
+/* =====================================
+   ANSWER
+===================================== */
+
+.view-faq-answer {
+    padding: 20px 21px;
+    background: #fafafa;
+    border: 1px solid #eeeeF2;
+    border-radius: 10px;
+    color: #555866;
+    font-size: 14px;
+    line-height: 1.9;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* =====================================
+   META DETAILS
+===================================== */
+
+.view-faq-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25px;
+    padding: 22px 0;
+}
+
+.view-faq-meta div {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #747784;
+    font-size: 12px;
+}
+
+.view-faq-meta i {
+    color: #6668e7;
+    font-size: 15px;
+}
+
+/* =====================================
+   ACTIONS
+===================================== */
+
+.view-faq-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    padding-top: 23px;
+    border-top: 1px solid #eeeeF2;
+}
+
+.view-faq-actions > div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.view-faq-delete-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 10px 17px;
+    border: 1px solid #f5d4d4;
+    border-radius: 8px;
+    background: #fff5f5;
+    color: #e74c3c;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.25s ease;
+}
+
+.view-faq-delete-btn:hover {
+    background: #e74c3c;
+    color: #ffffff;
+    border-color: #e74c3c;
+}

@@ -387,7 +387,7 @@
 }
 
 .portfolio-card-content p {
-    min-height: 66px;
+    /* min-height: 66px; */
     margin: 0 0 22px;
     color: var(--portfolio-muted);
     font-size: 12px;

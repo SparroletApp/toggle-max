@@ -1,78 +1,121 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+
+import blogService, { BlogItem } from "@/app/apiservice/blogservice";
+
 import "./blog.css";
-import "../courses/courses.css"
+import "../courses/courses.css";
+
 function Blog() {
-    const blogs = [
-        {
-            id: 1,
-            title: "The Importance of UI/UX Design in Modern Websites",
-            category: "UI/UX DESIGN",
-            date: "October 20, 2026",
-            image: "/blog-uiux.jpg",
-            description:
-                "Discover how user interface and user experience design help create engaging, accessible, and user-friendly websites.",
-            readTime: "5 min read",
-            link: "/blog/ui-ux-design",
-        },
-        {
-            id: 2,
-            title: "Why Figma Is Essential for Every UI/UX Designer",
-            category: "DESIGN TOOLS",
-            date: "October 15, 2026",
-            image: "/blog-figma.jpg",
-            description:
-                "Explore how Figma simplifies collaboration, wireframing, prototyping, and interface design for modern designers.",
-            readTime: "4 min read",
-            link: "/blog/figma-for-designers",
-        },
-        {
-            id: 3,
-            title: "Graphic Design Principles Every Beginner Should Know",
-            category: "GRAPHIC DESIGN",
-            date: "October 10, 2026",
-            image: "/blog-graphic.jpg",
-            description:
-                "Learn the fundamentals of color theory, typography, composition, and visual hierarchy to improve your design skills.",
-            readTime: "6 min read",
-            link: "/blog/graphic-design-principles",
-        },
-        {
-            id: 4,
-            title: "UI vs UX Design: Understanding the Difference",
-            category: "UI/UX DESIGN",
-            date: "October 5, 2026",
-            image: "/blog-ui-vs-ux.jpg",
-            description:
-                "Understand the difference between UI and UX design, how they work together, and why both matter in digital products.",
-            readTime: "5 min read",
-            link: "/blog/ui-vs-ux",
-        },
-        {
-            id: 5,
-            title: "How to Build a Strong UI/UX Design Portfolio",
-            category: "CAREER GUIDANCE",
-            date: "September 28, 2026",
-            image: "/blog-portfolio.jpg",
-            description:
-                "Learn how to showcase your design projects, explain your design process, and create a portfolio that attracts employers.",
-            readTime: "7 min read",
-            link: "/blog/ui-ux-portfolio",
-        },
-        {
-            id: 6,
-            title: "Top UI/UX Design Skills to Learn in 2026",
-            category: "DESIGN CAREER",
-            date: "September 20, 2026",
-            image: "/blog-design-skills.jpg",
-            description:
-                "Explore the essential design skills, tools, and practical techniques that can help you prepare for a design career.",
-            readTime: "6 min read",
-            link: "/blog/ui-ux-design-skills",
-        },
-    ];
+    const [blogs, setBlogs] = useState<BlogItem[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
+
+    useEffect(() => {
+        const fetchBlogs = async () => {
+            try {
+                setLoading(true);
+                setError("");
+
+                const response = await blogService.getAllBlogs();
+
+                setBlogs(response);
+            } catch (err: any) {
+                console.error("Blog fetch error:", err);
+
+                setError(
+                    err?.message || "Unable to load blogs. Please try again."
+                );
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchBlogs();
+    }, []);
+
+    // CREATE SLUG FROM BLOG TITLE
+    const createSlug = (title: string) => {
+        return title
+            .trim()
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/&/g, " and ")
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/^-+|-+$/g, "");
+    };
+
+    // STORE BLOG ID WHEN CLICKING A BLOG
+    const handleBlogClick = (blogId: number) => {
+        localStorage.setItem("blog_id", String(blogId));
+    };
+
+    // CONVERT LARAVEL STORAGE IMAGE PATH INTO FULL URL
+    const getImageUrl = (image: string | null) => {
+        if (!image) {
+            return "/blog-placeholder.jpg";
+        }
+
+        if (
+            image.startsWith("http://") ||
+            image.startsWith("https://")
+        ) {
+            return image;
+        }
+
+        const apiUrl =
+            process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+
+        const backendUrl = apiUrl
+            .replace(/\/api\/?$/, "")
+            .replace(/\/$/, "");
+
+        return `${backendUrl}/storage/${image.replace(/^\/+/, "")}`;
+    };
+
+    // CALCULATE APPROXIMATE READING TIME
+    const getReadTime = (description: string | null) => {
+        if (!description) {
+            return "1 min read";
+        }
+
+        const plainText = description.replace(/<[^>]*>/g, " ").trim();
+
+        const wordCount = plainText
+            .split(/\s+/)
+            .filter(Boolean).length;
+
+        const minutes = Math.max(1, Math.ceil(wordCount / 200));
+
+        return `${minutes} min read`;
+    };
+
+    // FORMAT LARAVEL DATE
+    const getFormattedDate = (date?: string) => {
+        if (!date) {
+            return "Recently published";
+        }
+
+        const parsedDate = new Date(date);
+
+        if (Number.isNaN(parsedDate.getTime())) {
+            return "Recently published";
+        }
+
+        return parsedDate.toLocaleDateString("en-IN", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+        });
+    };
 
     return (
         <main className="blog-page">
 
+            {/* PAGE BANNER */}
             <div className="aboutuss-top">
                 <div className="aboutus-overlay">
                     <div className="container">
@@ -84,7 +127,7 @@ function Blog() {
                             <h1>Our Blog</h1>
 
                             <p>
-                                <a href="/">Home</a>
+                                <Link href="/">Home</Link>
                                 <i className="bi bi-chevron-right"></i>
                                 <span>Blog</span>
                             </p>
@@ -92,8 +135,12 @@ function Blog() {
                     </div>
                 </div>
             </div>
+
+            {/* BLOG LIST */}
             <section className="blog-wrapper">
                 <div className="container blog-container">
+
+                    {/* SECTION HEADING */}
                     <div className="blog-section-heading">
                         <div>
                             <span className="blog-section-label">
@@ -108,79 +155,178 @@ function Blog() {
                             and graphic designers.
                         </p>
                     </div>
-                    <div className="blog-list">
 
-                        {blogs.map((blog, index) => (
-                            <article className="blog-article" key={blog.id}>
+                    {/* LOADING */}
+                    {loading && (
+                        <div className="text-center py-5">
+                            <div
+                                className="spinner-border"
+                                role="status"
+                            ></div>
 
-                                <div className="blog-article-number">
-                                    {String(index + 1).padStart(2, "0")}
-                                </div>
+                            <p className="mt-3">
+                                Loading latest articles...
+                            </p>
+                        </div>
+                    )}
 
-                                <a
-                                    href={blog.link}
-                                    className="blog-article-image"
-                                    aria-label={`Read ${blog.title}`}
-                                >
-                                    <img
-                                        src={blog.image}
-                                        alt={blog.title}
-                                        loading="lazy"
-                                    />
+                    {/* ERROR */}
+                    {!loading && error && (
+                        <div className="text-center py-5">
+                            <i className="bi bi-exclamation-circle fs-1 text-danger"></i>
 
-                                    <span className="blog-image-arrow">
-                                        <i className="bi bi-arrow-up-right"></i>
-                                    </span>
-                                </a>
+                            <h4 className="mt-3">
+                                Unable to Load Blogs
+                            </h4>
 
-                                <div className="blog-article-content">
+                            <p>{error}</p>
 
-                                    <div className="blog-article-category">
-                                        <span></span>
-                                        {blog.category}
-                                    </div>
+                            <button
+                                className="btn btn-primary"
+                                onClick={() => window.location.reload()}
+                            >
+                                Try Again
+                            </button>
+                        </div>
+                    )}
 
-                                    <h4>
-                                        <a href={blog.link}>
-                                            {blog.title}
-                                        </a>
-                                    </h4>
+                    {/* EMPTY */}
+                    {!loading && !error && blogs.length === 0 && (
+                        <div className="text-center py-5">
+                            <i className="bi bi-journal-text fs-1"></i>
 
-                                    <p className="blog-description">
-                                        {blog.description}
-                                    </p>
+                            <h4 className="mt-3">
+                                No Articles Available
+                            </h4>
 
-                                    <div className="blog-article-meta">
-                                        <span>
-                                            <i className="bi bi-calendar3"></i>
-                                            {blog.date}
-                                        </span>
+                            <p>
+                                New articles will be published here soon.
+                            </p>
+                        </div>
+                    )}
 
-                                        <span className="blog-meta-divider">
-                                            /
-                                        </span>
+                    {/* BLOG ARTICLES */}
+                    {!loading && !error && blogs.length > 0 && (
+                        <div className="blog-list">
 
-                                        <span>
-                                            <i className="bi bi-clock"></i>
-                                            {blog.readTime}
-                                        </span>
-                                    </div>
+                            {blogs.map((blog, index) => {
 
-                                    <a
-                                        href={blog.link}
-                                        className="blog-read-more"
-                                        aria-label={`Read more: ${blog.title}`}
+                                const blogSlug = createSlug(blog.title);
+
+                                // URL CONTAINS ONLY THE TITLE SLUG
+                                const blogUrl = `/blog/${blogSlug}`;
+
+                                return (
+                                    <article
+                                        className="blog-article"
+                                        key={blog.id}
                                     >
-                                        Read Article
-                                        <i className="bi bi-arrow-right"></i>
-                                    </a>
 
-                                </div>
+                                        <div className="blog-article-number">
+                                            {String(index + 1).padStart(2, "0")}
+                                        </div>
 
-                            </article>
-                        ))}
+                                        {/* BLOG IMAGE */}
+                                        <Link
+                                            href={blogUrl}
+                                            className="blog-article-image"
+                                            aria-label={`Read ${blog.title}`}
+                                            onClick={() =>
+                                                handleBlogClick(blog.id)
+                                            }
+                                        >
+                                            <img
+                                                src={getImageUrl(blog.main_image)}
+                                                alt={blog.title}
+                                                loading="lazy"
+                                                onError={(e) => {
+                                                    e.currentTarget.src =
+                                                        "/blog-placeholder.jpg";
+                                                }}
+                                            />
 
-                    </div>
+                                            <span className="blog-image-arrow">
+                                                <i className="bi bi-arrow-up-right"></i>
+                                            </span>
+                                        </Link>
+
+                                        <div className="blog-article-content">
+
+                                            {/* CATEGORY */}
+                                            <div className="blog-article-category">
+                                                <span></span>
+
+                                                {blog.badge_title || "GENERAL"}
+                                            </div>
+
+                                            {/* BLOG TITLE */}
+                                            <h4>
+                                                <Link
+                                                    href={blogUrl}
+                                                    onClick={() =>
+                                                        handleBlogClick(blog.id)
+                                                    }
+                                                >
+                                                    {blog.title}
+                                                </Link>
+                                            </h4>
+
+                                            {/* DESCRIPTION */}
+                                            <div
+                                                className="blog-description"
+                                                dangerouslySetInnerHTML={{
+                                                    __html:
+                                                        blog.desc ||
+                                                        "Explore this article to learn more.",
+                                                }}
+                                            />
+
+                                            {/* BLOG META */}
+                                            <div className="blog-article-meta">
+
+                                                <span>
+                                                    <i className="bi bi-calendar3"></i>
+
+                                                    {getFormattedDate(
+                                                        blog.created_at
+                                                    )}
+                                                </span>
+
+                                                <span className="blog-meta-divider">
+                                                    /
+                                                </span>
+
+                                                <span>
+                                                    <i className="bi bi-clock"></i>
+
+                                                    {getReadTime(blog.desc)}
+                                                </span>
+
+                                            </div>
+
+                                            {/* READ MORE */}
+                                            <Link
+                                                href={blogUrl}
+                                                className="blog-read-more"
+                                                aria-label={`Read more: ${blog.title}`}
+                                                onClick={() =>
+                                                    handleBlogClick(blog.id)
+                                                }
+                                            >
+                                                Read Article
+                                                <i className="bi bi-arrow-right"></i>
+                                            </Link>
+
+                                        </div>
+
+                                    </article>
+                                );
+                            })}
+
+                        </div>
+                    )}
+
+                    {/* BOTTOM CTA */}
                     <section className="blog-bottom">
 
                         <div className="blog-bottom-content">
@@ -200,13 +346,13 @@ function Blog() {
                                 that showcases your talent.
                             </p>
 
-                            <a
+                            <Link
                                 href="/courses"
                                 className="blog-contact-btn"
                             >
                                 Explore Our Courses
                                 <i className="bi bi-arrow-up-right"></i>
-                            </a>
+                            </Link>
 
                         </div>
 
