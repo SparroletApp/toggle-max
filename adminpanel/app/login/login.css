@@ -105,9 +105,6 @@
     }
 }
 
-/* ==========================================
-   LOGO
-========================================== */
 
 .login-brand {
     display: flex;
@@ -125,9 +122,6 @@
     object-position: center;
 }
 
-/* ==========================================
-   HEADING
-========================================== */
 
 .login-heading {
     margin-bottom: 27px;
@@ -178,10 +172,6 @@
     line-height: 1.8;
 }
 
-/* ==========================================
-   LOGIN FORM
-========================================== */
-
 .login-form {
     display: flex;
     flex-direction: column;
@@ -200,10 +190,6 @@
     font-size: 13px;
     font-weight: 700;
 }
-
-/* ==========================================
-   INPUT FIELDS
-========================================== */
 
 .login-input-wrapper {
     position: relative;
@@ -277,10 +263,6 @@
     transition: background-color 9999s ease-in-out 0s;
 }
 
-/* ==========================================
-   PASSWORD VISIBILITY BUTTON
-========================================== */
-
 .password-toggle {
     display: flex;
     align-items: center;
@@ -313,10 +295,6 @@
     color: var(--login-primary);
     background: var(--login-primary-light);
 }
-
-/* ==========================================
-   REMEMBER ME / FORGOT PASSWORD
-========================================== */
 
 .login-form-options {
     display: flex;
@@ -366,10 +344,6 @@
     color: #3537b5;
     text-decoration: underline;
 }
-
-/* ==========================================
-   LOGIN SUBMIT BUTTON
-========================================== */
 
 .login-submit {
     display: flex;
@@ -444,10 +418,6 @@
     outline-offset: 3px;
 }
 
-/* ==========================================
-   SECURITY NOTE
-========================================== */
-
 .login-security-note {
     display: flex;
     align-items: center;
@@ -477,10 +447,6 @@
     line-height: 1.6;
 }
 
-/* ==========================================
-   FOOTER
-========================================== */
-
 .login-footer {
     margin-top: 23px;
     padding-top: 18px;
@@ -498,10 +464,6 @@
     font-size: 11px;
     line-height: 1.7;
 }
-
-/* ==========================================
-   RESPONSIVE DESIGN
-========================================== */
 
 @media (max-width: 576px) {
     .admin-login {
@@ -572,9 +534,6 @@
     }
 }
 
-/* ==========================================
-   ACCESSIBILITY
-========================================== */
 
 @media (prefers-reduced-motion: reduce) {
     .login-card {

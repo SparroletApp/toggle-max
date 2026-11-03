@@ -10,28 +10,99 @@ class CourseController extends Controller
 {
     public function store(Request $request)
     {
+        $keyPoints = json_decode(
+            $request->input('keyPoints', '[]'),
+            true
+        );
+
+        $curriculum = json_decode(
+            $request->input('curriculum', '[]'),
+            true
+        );
+
+        if (!is_array($keyPoints)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid key points format.',
+            ], 422);
+        }
+
+        if (!is_array($curriculum)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid curriculum format.',
+            ], 422);
+        }
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'key_points' => 'nullable|array',
-            'key_points.*.title' => 'required_with:key_points|string|max:255',
-            'key_points.*.name' => 'required_with:key_points|string|max:255',
-            'key_points.*.description' => 'required_with:key_points|string',
-            'months' => 'nullable|integer|min:0',
+            'desc' => 'required|string',
+            'months' => 'required|integer|min:1',
             'days' => 'nullable|integer|min:0',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
             'badge' => 'nullable|string|max:255',
-            'curriculum_title' => 'nullable|string|max:255',
-            'curriculum_description' => 'nullable|string',
-            'curriculum_points' => 'nullable|array',
-            'curriculum_points.*' => 'required_with:curriculum_points|string|max:1000',
+            'image' => 'required|image|mimes:png,jpg,jpeg,webp|max:20480',
         ]);
+
+        foreach ($keyPoints as $point) {
+
+            if (
+                !is_array($point) ||
+                empty(trim($point['title'] ?? ''))
+            ) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Every key point must have a title.',
+                ], 422);
+            }
+        }
+
+        foreach ($curriculum as $section) {
+
+            if (
+                !is_array($section) ||
+                empty(trim($section['title'] ?? ''))
+            ) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Every curriculum module must have a title.',
+                ], 422);
+            }
+
+            if (!is_array($section['points'] ?? [])) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Curriculum topics must be an array.',
+                ], 422);
+            }
+        }
+
+        $data = [
+            'title' => $validated['title'],
+
+            'description' => $validated['desc'],
+
+            'months' => $validated['months'],
+
+            'days' => $validated['days'] ?? null,
+
+            'badge' => $validated['badge'] ?? null,
+
+            'key_points' => $keyPoints,
+
+            'curriculum_title' => $curriculum[0]['title'] ?? null,
+
+            'curriculum_description' => $curriculum[0]['desc'] ?? null,
+
+            'curriculum_points' => $curriculum,
+        ];
+
         if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')
+
+            $data['image'] = $request->file('image')
                 ->store('courses', 'public');
         }
 
-        $course = Course::create($validated);
+        $course = Course::create($data);
 
         return response()->json([
             'success' => true,
@@ -81,36 +152,124 @@ class CourseController extends Controller
                 'message' => 'Course not found.',
             ], 404);
         }
+
         $validated = $request->validate([
             'title' => 'sometimes|required|string|max:255',
-            'description' => 'sometimes|nullable|string',
-            'key_points' => 'sometimes|nullable|array',
-            'key_points.*.title' => 'required_with:key_points|string|max:255',
-            'key_points.*.name' => 'required_with:key_points|string|max:255',
-            'key_points.*.description' => 'required_with:key_points|string',
+            'desc' => 'sometimes|required|string',
             'months' => 'sometimes|nullable|integer|min:0',
             'days' => 'sometimes|nullable|integer|min:0',
-            'image' => 'sometimes|nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
             'badge' => 'sometimes|nullable|string|max:255',
-            'curriculum_title' => 'sometimes|nullable|string|max:255',
-            'curriculum_description' => 'sometimes|nullable|string',
-            'curriculum_points' => 'sometimes|nullable|array',
-            'curriculum_points.*' => 'required_with:curriculum_points|string|max:1000',
+            'image' => 'sometimes|nullable|image|mimes:png,jpg,jpeg,webp|max:20480',
         ]);
 
-        if ($request->hasFile('image')) {
-            $oldImage = $course->image;
-            $newImage = $request->file('image')
-                ->store('courses', 'public');
-            $validated['image'] = $newImage;
-            if ($oldImage) {
-                Storage::disk('public')->delete($oldImage);
-            }
-        } else {
-            unset($validated['image']);
+        $data = [];
+
+        if (array_key_exists('title', $validated)) {
+            $data['title'] = $validated['title'];
         }
 
-        $course->update($validated);
+        if (array_key_exists('desc', $validated)) {
+            $data['description'] = $validated['desc'];
+        }
+
+        if (array_key_exists('months', $validated)) {
+            $data['months'] = $validated['months'];
+        }
+
+        if (array_key_exists('days', $validated)) {
+            $data['days'] = $validated['days'];
+        }
+
+        if (array_key_exists('badge', $validated)) {
+            $data['badge'] = $validated['badge'];
+        }
+
+        if ($request->has('keyPoints')) {
+
+            $keyPoints = json_decode(
+                $request->input('keyPoints'),
+                true
+            );
+
+            if (!is_array($keyPoints)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid key points format.',
+                ], 422);
+            }
+
+            foreach ($keyPoints as $point) {
+
+                if (
+                    !is_array($point) ||
+                    empty(trim($point['title'] ?? ''))
+                ) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Every key point must have a title.',
+                    ], 422);
+                }
+            }
+
+            $data['key_points'] = $keyPoints;
+        }
+
+        if ($request->has('curriculum')) {
+
+            $curriculum = json_decode(
+                $request->input('curriculum'),
+                true
+            );
+
+            if (!is_array($curriculum)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid curriculum format.',
+                ], 422);
+            }
+
+            foreach ($curriculum as $section) {
+
+                if (
+                    !is_array($section) ||
+                    empty(trim($section['title'] ?? ''))
+                ) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Every curriculum module must have a title.',
+                    ], 422);
+                }
+
+                if (!is_array($section['points'] ?? [])) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Curriculum topics must be an array.',
+                    ], 422);
+                }
+            }
+
+            $data['curriculum_title'] =
+                $curriculum[0]['title'] ?? null;
+
+            $data['curriculum_description'] =
+                $curriculum[0]['desc'] ?? null;
+            $data['curriculum_points'] = $curriculum;
+        }
+
+        if ($request->hasFile('image')) {
+
+            if (
+                $course->image &&
+                Storage::disk('public')->exists($course->image)
+            ) {
+                Storage::disk('public')->delete($course->image);
+            }
+
+            $data['image'] = $request->file('image')
+                ->store('courses', 'public');
+        }
+
+        $course->update($data);
 
         return response()->json([
             'success' => true,
@@ -118,6 +277,7 @@ class CourseController extends Controller
             'data' => $this->formatCourse($course->fresh()),
         ], 200);
     }
+
 
     public function destroy(string $id)
     {
@@ -130,9 +290,13 @@ class CourseController extends Controller
             ], 404);
         }
 
-        if ($course->image) {
+        if (
+            $course->image &&
+            Storage::disk('public')->exists($course->image)
+        ) {
             Storage::disk('public')->delete($course->image);
         }
+
         $course->delete();
 
         return response()->json([
@@ -140,6 +304,8 @@ class CourseController extends Controller
             'message' => 'Course and its image deleted successfully.',
         ], 200);
     }
+
+
 
     private function formatCourse(Course $course): array
     {
