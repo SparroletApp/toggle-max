@@ -1,169 +1,254 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+
+import portfolioService from "@/app/apiservice/portfolioservice";
 import "./portfolio-view.css";
 
-const projects = [
-    {
-        slug: "e-commerce-app-design",
-        title: "E-Commerce App Design",
-        category: "UI/UX Design",
-        student: "UI/UX Student Project",
-        image: "/graphic-attract.jpg",
-        icon: "bi-bag",
-        description:
-            "A modern shopping experience designed with intuitive navigation and a user-friendly interface.",
-        overview:
-            "This e-commerce application concept focuses on creating a seamless online shopping experience. It combines a clean interface, intuitive navigation, and an organized product browsing experience to help users discover products and complete purchases effortlessly.",
-        objective:
-            "To design a user-friendly shopping application that simplifies product discovery, improves navigation, and creates a smooth checkout experience.",
-        challenge:
-            "Organizing a large product collection while maintaining a simple interface and making important shopping actions easy to find.",
-        solution:
-            "A structured product layout, clear visual hierarchy, intuitive category navigation, and consistent interface elements improve usability.",
-        tools: ["Figma", "UI Design", "UX Research", "Prototyping"],
-    },
-    {
-        slug: "travel-website",
-        title: "Travel Website",
-        category: "Web Design",
-        student: "Web Design Student Project",
-        image: "/graphicss.jpg",
-        icon: "bi-globe",
-        description:
-            "A visually engaging travel website designed to make exploring destinations simple and enjoyable.",
-        overview:
-            "A travel website concept that helps visitors explore destinations, discover travel experiences, and plan their next adventure through an engaging digital experience.",
-        objective:
-            "To make destination discovery and travel planning visually engaging and easy to navigate.",
-        challenge:
-            "Presenting destination information and travel inspiration without overwhelming visitors.",
-        solution:
-            "Destination-focused imagery, clear navigation, and structured content create an enjoyable browsing experience.",
-        tools: ["Figma", "Web Design", "UI Design", "Prototyping"],
-    },
-    {
-        slug: "food-delivery-app",
-        title: "Food Delivery App",
-        category: "Mobile App",
-        student: "UI/UX Student Project",
-        image: "/figma.jpg",
-        icon: "bi-phone",
-        description:
-            "A mobile application concept focused on seamless food discovery, ordering, and delivery tracking.",
-        overview:
-            "This food delivery application concept brings restaurant discovery, menu browsing, ordering, and delivery tracking into one simple mobile experience.",
-        objective:
-            "To simplify food ordering with an intuitive interface and a clear checkout process.",
-        challenge:
-            "Helping users quickly find meals, compare options, and understand their order status.",
-        solution:
-            "Search-friendly navigation, organized restaurant listings, clear menus, and straightforward ordering steps.",
-        tools: ["Figma", "Mobile UI Design", "UX Research", "Prototyping"],
-    },
-    {
-        slug: "brand-identity-design",
-        title: "Brand Identity Design",
-        category: "Graphic Design",
-        student: "Graphic Design Student Project",
-        image: "/adobe.jpg",
-        icon: "bi-palette",
-        description:
-            "A creative branding project featuring a distinctive visual identity, typography, and color system.",
-        overview:
-            "A visual branding concept that explores how colors, typography, graphic elements, and brand assets work together to communicate a consistent brand personality.",
-        objective:
-            "To develop a memorable visual identity that communicates a brand's personality across different touchpoints.",
-        challenge:
-            "Creating a distinctive visual language that remains consistent across multiple formats.",
-        solution:
-            "A cohesive color palette, carefully selected typography, and consistent graphic elements create a recognizable brand identity.",
-        tools: [
-            "Adobe Illustrator",
-            "Adobe Photoshop",
-            "Typography",
-            "Brand Design",
-        ],
-    },
-    {
-        slug: "finance-dashboard",
-        title: "Finance Dashboard",
-        category: "UI/UX Design",
-        student: "UI/UX Student Project",
-        image: "/courses.jpg",
-        icon: "bi-bar-chart",
-        description:
-            "A clean dashboard interface that presents financial insights through structured layouts and data visualization.",
-        overview:
-            "A finance dashboard concept designed to make financial information easier to understand through organized data, clear visualizations, and accessible interface components.",
-        objective:
-            "To present complex financial information in a clear, structured, and easy-to-understand interface.",
-        challenge:
-            "Displaying different financial metrics without making the dashboard visually crowded.",
-        solution:
-            "A modular layout, clear typography, and carefully organized charts improve the dashboard experience.",
-        tools: ["Figma", "Dashboard Design", "Data Visualization", "Prototyping"],
-    },
-    {
-        slug: "fitness-mobile-app",
-        title: "Fitness Mobile App",
-        category: "Mobile App",
-        student: "UI/UX Student Project",
-        image: "/uiux.jpg",
-        icon: "bi-heart-pulse",
-        description:
-            "A fitness application concept designed to help users track workouts, monitor progress, and build healthy habits.",
-        overview:
-            "A fitness application concept that helps users organize workouts, track their activity, and monitor their progress through a simple and motivating mobile interface.",
-        objective:
-            "To create a fitness tracking experience that makes workout planning and progress monitoring accessible.",
-        challenge:
-            "Presenting workout information and progress metrics in a way that is easy to understand.",
-        solution:
-            "A structured dashboard, clear progress indicators, and accessible workout information create an engaging experience.",
-        tools: ["Figma", "Mobile UI Design", "UX Research", "Prototyping"],
-    },
-];
+interface PortfolioDetail {
+    title: string;
+    desc: string;
+}
 
-const designProcess = [
-    {
-        number: "01",
-        title: "Research",
-        icon: "bi-search",
-        description:
-            "Understand user needs, identify problems, and explore ideas before starting the design.",
-    },
-    {
-        number: "02",
-        title: "Wireframing",
-        icon: "bi-bezier2",
-        description:
-            "Plan the structure, navigation, and essential elements of the project.",
-    },
-    {
-        number: "03",
-        title: "Visual Design",
-        icon: "bi-palette",
-        description:
-            "Develop the visual identity using typography, colors, layouts, and design components.",
-    },
-    {
-        number: "04",
-        title: "Prototyping",
-        icon: "bi-phone",
-        description:
-            "Connect screens and demonstrate how the final design works.",
-    },
-];
+interface PortfolioItem {
+    id: number;
+    category: string;
+    category_desc: string | null;
+    portfolio_badge: string | null;
+    project_owner: string | null;
+    title: string;
+    desc: string | null;
+    image: string | null;
+    image_url: string | null;
+    details: PortfolioDetail[];
+    objectives: PortfolioDetail[];
+    concepts: PortfolioDetail[];
+}
+
+function getSlug(title: string) {
+    return title
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "");
+}
+
+function parseApiResponse(response: any): any {
+    let result = response?.data ?? response;
+    if (typeof result === "string") {
+        result = result
+            .replace(/^```(?:php|json|javascript)?\s*/i, "")
+            .replace(/\s*```$/i, "")
+            .trim();
+
+        try {
+            result = JSON.parse(result);
+        } catch (error) {
+            console.error("Portfolio JSON parsing error:", error);
+            return null;
+        }
+    }
+    if (
+        result &&
+        typeof result === "object" &&
+        !Array.isArray(result) &&
+        result.data !== undefined
+    ) {
+        result = result.data;
+    }
+
+    return result;
+}
+
+function parseArray(value: any): PortfolioDetail[] {
+    if (Array.isArray(value)) {
+        return value;
+    }
+
+    if (typeof value === "string") {
+        try {
+            const parsed = JSON.parse(value);
+            return Array.isArray(parsed) ? parsed : [];
+        } catch {
+            return [];
+        }
+    }
+
+    return [];
+}
+
+function normalizePortfolio(item: any): PortfolioItem {
+    return {
+        id: Number(item.id),
+        category: item.category || "",
+        category_desc: item.category_desc || null,
+        portfolio_badge: item.portfolio_badge || null,
+        project_owner: item.project_owner || null,
+        title: item.title || "",
+        desc: item.desc || null,
+        image: item.image || null,
+        image_url: item.image_url || null,
+        details: parseArray(item.details),
+        objectives: parseArray(item.objectives),
+        concepts: parseArray(item.concepts),
+    };
+}
+
+function getCategoryIcon(category: string) {
+    const value = category.toLowerCase();
+
+    if (value.includes("ui") || value.includes("ux")) {
+        return "bi-palette";
+    }
+
+    if (value.includes("web")) {
+        return "bi-globe";
+    }
+
+    if (value.includes("mobile") || value.includes("app")) {
+        return "bi-phone";
+    }
+
+    if (value.includes("graphic")) {
+        return "bi-brush";
+    }
+
+    return "bi-grid";
+}
+
+function getPlainText(value: string | null) {
+    if (!value) return "";
+
+    return value.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function getPortfolioImage(portfolio: PortfolioItem) {
+    if (portfolio.image_url) {
+        return portfolio.image_url;
+    }
+
+    if (portfolio.image?.startsWith("http")) {
+        return portfolio.image;
+    }
+
+    if (portfolio.image) {
+        return `http://localhost:8000/storage/${portfolio.image}`;
+    }
+
+    return "";
+}
 
 function PortfolioView() {
     const params = useParams<{ slug: string }>();
-    const slug = params.slug;
+    const slug = decodeURIComponent(String(params.slug || ""));
 
-    const project = projects.find((item) => item.slug === slug);
+    const [portfolio, setPortfolio] = useState<PortfolioItem | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [notFound, setNotFound] = useState(false);
 
-    if (!project) {
+    useEffect(() => {
+        if (!slug) return;
+
+        let isMounted = true;
+
+        const fetchPortfolio = async () => {
+            try {
+                setLoading(true);
+                setNotFound(false);
+
+                let selectedPortfolio: any = null;
+
+                const storedId =
+                    typeof window !== "undefined"
+                        ? localStorage.getItem("portfolio_id")
+                        : null;
+
+                if (storedId) {
+                    try {
+                        const response = await portfolioService.getById(
+                            Number(storedId)
+                        );
+
+                        selectedPortfolio = parseApiResponse(response);
+                    } catch (error) {
+                        console.error(
+                            "Error fetching portfolio by ID:",
+                            error
+                        );
+                    }
+                }
+                if (
+                    !selectedPortfolio ||
+                    getSlug(selectedPortfolio.title || "") !== slug
+                ) {
+                    const response = await portfolioService.getAll();
+                    const portfolioList = parseApiResponse(response);
+
+                    const items = Array.isArray(portfolioList)
+                        ? portfolioList
+                        : [];
+
+                    selectedPortfolio = items.find(
+                        (item: any) => getSlug(item.title || "") === slug
+                    );
+                }
+
+                if (!selectedPortfolio) {
+                    if (isMounted) {
+                        setNotFound(true);
+                        setPortfolio(null);
+                    }
+                    return;
+                }
+
+                const formattedPortfolio =
+                    normalizePortfolio(selectedPortfolio);
+
+                if (isMounted) {
+                    setPortfolio(formattedPortfolio);
+                    localStorage.setItem(
+                        "portfolio_id",
+                        String(formattedPortfolio.id)
+                    );
+                }
+            } catch (error) {
+                console.error("Error loading portfolio:", error);
+
+                if (isMounted) {
+                    setNotFound(true);
+                    setPortfolio(null);
+                }
+            } finally {
+                if (isMounted) {
+                    setLoading(false);
+                }
+            }
+        };
+
+        fetchPortfolio();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [slug]);
+
+    if (loading) {
+        return (
+            <section className="portfolio-view-not-found">
+                <div className="portfolio-view-not-found-icon">
+                    <i className="bi bi-arrow-repeat"></i>
+                </div>
+
+                <h1>Loading Project...</h1>
+
+                <p>Please wait while we load the student project details.</p>
+            </section>
+        );
+    }
+
+    if (notFound || !portfolio) {
         return (
             <section className="portfolio-view-not-found">
                 <div className="portfolio-view-not-found-icon">
@@ -188,26 +273,37 @@ function PortfolioView() {
         );
     }
 
+    const categoryIcon = getCategoryIcon(portfolio.category);
+    const imageUrl = getPortfolioImage(portfolio);
+
+    const heroDescription =
+        getPlainText(portfolio.category_desc) ||
+        getPlainText(portfolio.desc) ||
+        "Explore this creative student project and discover the ideas behind its design.";
+
     return (
         <main className="portfolio-view-page">
+
             <section className="portfolio-view-hero container">
                 <div className="portfolio-view-container">
                     <div className="portfolio-view-hero-grid">
+
                         <div className="portfolio-view-hero-content">
+
                             <span className="portfolio-view-eyebrow">
                                 <span></span>
                                 TOGGLEMAX STUDENT WORK
                             </span>
 
                             <span className="portfolio-view-category">
-                                <i className={`bi ${project.icon}`}></i>
-                                {project.category}
+                                <i className={`bi ${categoryIcon}`}></i>
+                                {portfolio.category}
                             </span>
 
-                            <h1>{project.title}</h1>
+                            <h1>{portfolio.title}</h1>
 
                             <p className="portfolio-view-description">
-                                {project.description}
+                                {heroDescription}
                             </p>
 
                             <div className="portfolio-view-student">
@@ -217,7 +313,10 @@ function PortfolioView() {
 
                                 <div>
                                     <small>PROJECT BY</small>
-                                    <strong>{project.student}</strong>
+                                    <strong>
+                                        {portfolio.project_owner ||
+                                            "Togglemax Student"}
+                                    </strong>
                                 </div>
                             </div>
 
@@ -228,98 +327,100 @@ function PortfolioView() {
                                 Explore Project
                                 <i className="bi bi-arrow-down-right"></i>
                             </a>
+
                         </div>
 
                         <div className="portfolio-view-hero-image">
+
                             <div className="portfolio-view-image-frame">
-                                <img
-                                    src={project.image}
-                                    alt={project.title}
-                                />
+
+                                {imageUrl ? (
+                                    <img
+                                        src={imageUrl}
+                                        alt={portfolio.title}
+                                    />
+                                ) : (
+                                    <div className="portfolio-no-image">
+                                        <i className={`bi ${categoryIcon}`}></i>
+                                        <span>No project image available</span>
+                                    </div>
+                                )}
 
                                 <div className="portfolio-view-image-caption">
+
                                     <span>
-                                        <i className={`bi ${project.icon}`}></i>
+                                        <i className={`bi ${categoryIcon}`}></i>
                                     </span>
 
                                     <div>
-                                        <strong>{project.title}</strong>
+                                        <strong>{portfolio.title}</strong>
                                         <small>Student Design Project</small>
                                     </div>
+
                                 </div>
+
                             </div>
 
                             <div className="portfolio-view-floating-badge">
                                 <i className="bi bi-stars"></i>
                                 Creative Thinking
                             </div>
+
                         </div>
+
                     </div>
                 </div>
             </section>
+
             <section
                 className="portfolio-view-overview container"
                 id="project-overview"
             >
                 <div className="portfolio-view-container">
+
                     <div className="portfolio-view-section-heading">
-                    
+
                         <h2>
                             Turning Ideas Into{" "}
                             <strong>Meaningful Experiences.</strong>
                         </h2>
+
                         <p>
                             Discover the ideas, design decisions, and creative
                             thinking behind this student project.
                         </p>
+
                     </div>
+
                     <div className="portfolio-view-details-grid">
+
+
                         <div className="portfolio-view-details">
-                            <article className="portfolio-view-detail-item">
-                                <span className="portfolio-view-detail-number">
-                                    01
-                                </span>
-                                <div>
-                                    <h3>Project Overview</h3>
-                                    <p>{project.overview}</p>
-                                </div>
-                            </article>
 
-                            <article className="portfolio-view-detail-item">
-                                <span className="portfolio-view-detail-number">
-                                    02
-                                </span>
+                            {portfolio.objectives.map((item, index) => (
+                                <article
+                                    className="portfolio-view-detail-item"
+                                    key={`objective-${index}`}
+                                >
 
-                                <div>
-                                    <h3>Project Objective</h3>
-                                    <p>{project.objective}</p>
-                                </div>
-                            </article>
+                                    <span className="portfolio-view-detail-number">
+                                        {String(index + 1).padStart(2, "0")}
+                                    </span>
 
-                            <article className="portfolio-view-detail-item">
-                                <span className="portfolio-view-detail-number">
-                                    03
-                                </span>
+                                    <div>
+                                        <h3>{item.title}</h3>
+                                        <p>{item.desc}</p>
+                                    </div>
 
-                                <div>
-                                    <h3>The Challenge</h3>
-                                    <p>{project.challenge}</p>
-                                </div>
-                            </article>
+                                </article>
+                            ))}
 
-                            <article className="portfolio-view-detail-item">
-                                <span className="portfolio-view-detail-number">
-                                    04
-                                </span>
-
-                                <div>
-                                    <h3>The Solution</h3>
-                                    <p>{project.solution}</p>
-                                </div>
-                            </article>
                         </div>
 
+
+
                         <aside className="portfolio-view-info">
+
                             <div className="portfolio-view-info-heading">
                                 <span>
                                     <i className="bi bi-grid-1x2"></i>
@@ -331,45 +432,31 @@ function PortfolioView() {
                                 </div>
                             </div>
 
-                            <div className="portfolio-view-info-row">
-                                <span>Project Name</span>
-                                <strong>{project.title}</strong>
-                            </div>
-
-                            <div className="portfolio-view-info-row">
-                                <span>Category</span>
-                                <strong>{project.category}</strong>
-                            </div>
-
-                            <div className="portfolio-view-info-row">
-                                <span>Project Type</span>
-                                <strong>Student Project</strong>
-                            </div>
-
-                            <div className="portfolio-view-info-row">
-                                <span>Created By</span>
-                                <strong>Togglemax Student</strong>
-                            </div>
-
-                            <div className="portfolio-view-tools">
-                                <h4>
-                                    <i className="bi bi-tools"></i>
-                                    Tools & Skills
-                                </h4>
-
-                                <div>
-                                    {project.tools.map((tool) => (
-                                        <span key={tool}>{tool}</span>
-                                    ))}
+                            {portfolio.details.map((item, index) => (
+                                <div
+                                    className="portfolio-view-info-row"
+                                    key={`detail-${index}`}
+                                >
+                                    <div>
+                                        <strong>{item.title}</strong>
+                                        <p>{item.desc}</p>
+                                    </div>
                                 </div>
-                            </div>
+                            ))}
+
                         </aside>
                     </div>
                 </div>
             </section>
+
+
+
             <section className="portfolio-view-process">
+
                 <div className="portfolio-view-container container">
+
                     <div className="portfolio-view-section-heading">
+
                         <span>OUR CREATIVE APPROACH</span>
 
                         <h2>
@@ -381,32 +468,51 @@ function PortfolioView() {
                             A thoughtful process transforms creative ideas into
                             practical and engaging design experiences.
                         </p>
+
                     </div>
 
                     <div className="portfolio-view-process-grid">
-                        {designProcess.map((step) => (
+
+                        {portfolio.concepts.map((item, index) => (
                             <article
                                 className="portfolio-view-process-card"
-                                key={step.number}
+                                key={`concept-${index}`}
                             >
-                                <div className="portfolio-view-process-top">
-                                    <span>{step.number}</span>
 
-                                    <i className={`bi ${step.icon}`}></i>
+                                <div className="portfolio-view-process-top">
+
+                                    <span>
+                                        {String(index + 1).padStart(2, "0")}
+                                    </span>
+
+                                    <i className="bi bi-lightbulb"></i>
+
                                 </div>
 
-                                <h3>{step.title}</h3>
+                                <h3>{item.title}</h3>
 
-                                <p>{step.description}</p>
+                                <p>{item.desc}</p>
+
                             </article>
                         ))}
+
                     </div>
+
                 </div>
+
             </section>
+
+
+            {/* CALL TO ACTION */}
+
             <section className="portfolio-view-cta-section">
+
                 <div className="container">
+
                     <div className="portfolio-view-cta">
+
                         <div className="portfolio-view-cta-content">
+
                             <span>START YOUR CREATIVE JOURNEY</span>
 
                             <h2>
@@ -421,6 +527,7 @@ function PortfolioView() {
                             </p>
 
                             <div className="portfolio-view-cta-actions">
+
                                 <Link
                                     href="/contact-us"
                                     className="portfolio-view-primary-button"
@@ -436,15 +543,21 @@ function PortfolioView() {
                                     <i className="bi bi-arrow-left"></i>
                                     Back to Portfolio
                                 </Link>
+
                             </div>
+
                         </div>
 
                         <div className="portfolio-view-cta-icon">
                             <i className="bi bi-lightbulb"></i>
                         </div>
+
                     </div>
+
                 </div>
+
             </section>
+
         </main>
     );
 }

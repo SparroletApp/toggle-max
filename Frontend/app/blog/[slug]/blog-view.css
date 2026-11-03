@@ -116,7 +116,7 @@
 
 .blog-view-cover {
     position: relative;
-    height: clamp(260px, 44vw, 490px);
+    height: 250px;
     margin-bottom: 55px;
     overflow: hidden;
     border: 1px solid var(--bv-border);

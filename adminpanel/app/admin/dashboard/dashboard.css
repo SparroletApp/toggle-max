@@ -10,6 +10,52 @@
     --dashboard-border: #eeeeF2;
 }
 
+/* DASHBOARD HEADER ACTIONS */
+
+.dashboard-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+/* LOGOUT BUTTON */
+
+.dashboard-logout-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    padding: 11px 20px;
+    border: 1px solid #ffe0e0;
+    border-radius: 12px;
+    background: #fff0f0;
+    color: #e34d5b;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dashboard-logout-btn i {
+    font-size: 17px;
+}
+
+.dashboard-logout-btn:hover {
+    background: #e34d5b;
+    border-color: #e34d5b;
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(227, 77, 91, 0.18);
+}
+
+.dashboard-logout-btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    transform: none;
+}
+
+
+
 .dashboard-header {
     display: flex;
     align-items: center;

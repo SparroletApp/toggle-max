@@ -1,7 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import contactService, {
+    ContactFormData,
+} from "@/app/apiservice/contactservice";
+
 import "./contact-us.css";
+import Swal from "sweetalert2";
 
 function ContactUs() {
     const [loading, setLoading] = useState(false);
@@ -21,14 +26,12 @@ function ContactUs() {
         }
 
         setLoading(true);
-        setStatusMessage("");
-        setIsSuccess(false);
 
         const formData = new FormData(form);
 
-        const payload = {
-            firstName: String(formData.get("firstName") || ""),
-            lastName: String(formData.get("lastName") || ""),
+        const payload: ContactFormData = {
+            first_name: String(formData.get("firstName") || ""),
+            last_name: String(formData.get("lastName") || ""),
             email: String(formData.get("email") || ""),
             phone: String(formData.get("phone") || ""),
             subject: String(formData.get("subject") || ""),
@@ -36,37 +39,74 @@ function ContactUs() {
         };
 
         try {
-            const response = await fetch("/api/contact", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(payload),
-            });
+            const response = await contactService.create(payload);
 
-            const result = await response.json();
+            console.log("Contact API Raw Response:", response);
 
-            if (!response.ok) {
-                setStatusMessage(
-                    result.message ||
-                    "Unable to send your message. Please try again."
-                );
-                return;
+            let result: any = response;
+
+            // Handle string response
+            if (typeof response === "string") {
+
+                // Remove Markdown code fences if present
+                const cleanedResponse = response
+                    .replace(/^```(?:php|json)?\s*/i, "")
+                    .replace(/\s*```$/i, "")
+                    .trim();
+
+                result = JSON.parse(cleanedResponse);
             }
 
-            setIsSuccess(true);
-            setStatusMessage(
-                result.message ||
-                "Thank you for contacting us! Your message has been sent."
-            );
+            console.log("Parsed Contact API Result:", result);
 
-            form.reset();
-        } catch (error) {
+            // Check successful submission
+            if (result?.success === true || result?.success === "true") {
+
+                // Clear form fields
+                form.reset();
+
+                // Success toast
+                Swal.fire({
+                    toast: true,
+                    position: "top-end",
+                    icon: "success",
+                    title: "Details submitted successfully!",
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                });
+
+            } else {
+
+                // Error toast
+                Swal.fire({
+                    toast: true,
+                    position: "top-end",
+                    icon: "error",
+                    title: result?.message || "Unable to submit details.",
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                });
+
+            }
+
+        } catch (error: any) {
+
             console.error("Contact form submission error:", error);
 
-            setStatusMessage(
-                "Unable to send your message. Please check your connection and try again."
-            );
+            Swal.fire({
+                toast: true,
+                position: "top-end",
+                icon: "error",
+                title:
+                    error?.response?.data?.message ||
+                    "Something went wrong. Please try again.",
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+            });
+
         } finally {
             setLoading(false);
         }
@@ -96,7 +136,6 @@ function ContactUs() {
                     </div>
                 </div>
             </div>
-
 
             <div className="contact-content">
                 <div className="container">
@@ -137,9 +176,11 @@ function ContactUs() {
 
                                     <div className="contact-detail-content">
                                         <h3>Call Us</h3>
-                                        <a href="tel:+91 6282089962">
+
+                                        <a href="tel:+916282089962">
                                             +91 62820 89962
                                         </a>
+
                                         <span>Customer Care</span>
                                     </div>
                                 </div>
@@ -151,10 +192,10 @@ function ContactUs() {
 
                                     <div className="contact-detail-content">
                                         <h3>Email Us</h3>
+
                                         <a href="mailto:info@rayloop.com">
-                                           info@rayloop.com
+                                            info@rayloop.com
                                         </a>
-                                       
                                     </div>
                                 </div>
                             </div>
@@ -221,6 +262,7 @@ function ContactUs() {
                                 onSubmit={handleContactSubmit}
                             >
                                 <div className="row contact-form-row">
+
                                     <div className="col-md-6 col-12">
                                         <label htmlFor="first-name">
                                             First Name
@@ -278,7 +320,7 @@ function ContactUs() {
                                             type="tel"
                                             id="phone"
                                             name="phone"
-                                            placeholder="+91 6238742481"
+                                            placeholder="+91 6282089962"
                                             autoComplete="tel"
                                             required
                                             disabled={loading}
@@ -301,16 +343,16 @@ function ContactUs() {
                                                 Select your enquiry
                                             </option>
 
-                                            <option value="product-enquiry">
-                                                Product Enquiry
+                                            <option value="course-enquiry">
+                                                Course Enquiry
                                             </option>
 
-                                            <option value="bulk-order">
-                                                Bulk Order
+                                            <option value="admission">
+                                                Admission
                                             </option>
 
-                                            <option value="quotation">
-                                                Request a Quote
+                                            <option value="placement">
+                                                Placement Enquiry
                                             </option>
 
                                             <option value="partnership">
@@ -382,12 +424,14 @@ function ContactUs() {
 
                                 <div className="contact-form-note">
                                     <i className="bi bi-shield-check"></i>
+
                                     <span>
                                         Your information is treated with care.
                                     </span>
                                 </div>
                             </form>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -401,24 +445,22 @@ function ContactUs() {
                     <h2>Visit Our Facility</h2>
 
                     <p>
-                        We welcome your enquiries about our surgical glove
-                        manufacturing facility in Kochi, Kerala.
+                        We welcome your enquiries about our training facility
+                        in Kochi, Kerala.
                     </p>
                 </div>
 
                 <div className="contact-map-frame">
-                 
-<iframe
-    src="https://maps.google.com/maps?q=Ullampilly%20Building%2C%20Second%20Floor%2C%20Seaport%20-%20Airport%20Rd%2C%20behind%20Olimugal%20Juma%20Masjid%2C%20Thrikkakara%2C%20Vazhakkala%2C%20Kakkanad%2C%20Kochi%2C%20Kerala%20682030&t=&z=15&ie=UTF8&iwloc=&output=embed"
-    title="Togglemax Education Location"
-    width="100%"
-    height="100%"
-    style={{ border: 0 }}
-    allowFullScreen
-    loading="lazy"
-    referrerPolicy="no-referrer-when-downgrade"
-></iframe>
-
+                    <iframe
+                        src="https://maps.google.com/maps?q=Ullampilly%20Building%2C%20Second%20Floor%2C%20Seaport%20-%20Airport%20Rd%2C%20behind%20Olimugal%20Juma%20Masjid%2C%20Thrikkakara%2C%20Vazhakkala%2C%20Kakkanad%2C%20Kochi%2C%20Kerala%20682030&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                        title="Togglemax Education Location"
+                        width="100%"
+                        height="100%"
+                        style={{ border: 0 }}
+                        allowFullScreen
+                        loading="lazy"
+                        referrerPolicy="no-referrer-when-downgrade"
+                    ></iframe>
                 </div>
             </div>
         </section>
